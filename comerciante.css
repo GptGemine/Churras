@@ -1,0 +1,335 @@
+    /* comerciante.css */
+
+    /* Estilização do header */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #ffffff/* Substitua pelo código da cor desejada */
+    }
+
+    .header {
+        width: 100%;
+        text-align: center;
+        padding: 40px 0; /* Reduz o padding para telas menores */
+        background: rgba(0, 0, 0, 0.6);
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        background-image: url(uploads/fundo.png);
+        background-repeat: no-repeat; 
+        background-size: cover; 
+        background-position: center;
+    }
+    
+    .header-content {
+        max-width: 90%; /* Ajuste para telas pequenas */
+        margin: 0 auto;
+        text-align: center;
+        padding: 0 20px; /* Adicione padding horizontal para evitar toques nas laterais */
+    }
+    
+    @media (min-width: 768px) {
+        .header-content {
+            max-width: 600px; /* Tamanho maior para telas médias */
+        }
+    }
+    .logo {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .logo:hover {
+        transform: scale(1.1);
+    }
+
+    .titulo {
+        font-size: 2.5em;
+        margin: 20px 0 10px;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    .endereco, .horario span {
+        font-size: 1em;
+        color: #ffffff;
+        display: block;
+        margin: 10px 0;
+    }
+
+    .horario {
+        background: #ff0800;
+        color: #ffffff;
+        padding: 3px 6px;
+        border-radius: 8px;
+        display: inline-block;
+        margin-bottom: 20px;
+    }
+
+    /* Footer fixo na parte inferior da página */
+    .footer {
+        width: 100%;
+        background-color: #ff0800; /* Cor inicial do footer */
+        padding: 10px 0;
+        position: fixed;
+        bottom: 0;
+        z-index: 40;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s ease; /* Transição suave ao mudar cor */
+    }
+
+    /* Botão Cadastrar Produto */
+    .botao-cadastrar {
+        width: 120%; /* Faz o botão ocupar toda a largura do footer */
+        background-color: transparent; /* Torna o botão transparente, para parecer que faz parte do footer */
+        color: #fff;
+        padding: 15px 0;
+        font-weight: bold;
+        font-size: 18px;
+        border: none;
+        cursor: pointer;
+        text-align: center;
+        transition: color 0.3s ease; /* Suavização para a cor do texto ao passar o mouse */
+    }
+
+    /* Mudança de cor ao passar o mouse no footer inteiro (inclui o botão) */
+    .footer:hover {
+        background-color: #ee7d3c; /* Muda a cor do footer e, por consequência, do botão */
+    }
+
+    /* Alteração da cor do texto do botão ao passar o mouse no footer */
+    .footer:hover .botao-cadastrar {
+        color: #ffffff; /* Cor do texto do botão permanece branca */
+    }
+
+
+    /* Modal para cadastro de produto */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+        background-color: #ffffff;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 400px;
+        border-radius: 10px;
+    }
+
+    .modal-content input, .modal-content select {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .btn-salvar-produto {
+        width: 100%;
+        padding: 10px;
+        background-color: #ff0000;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        transition: background-color 0.3s;
+    }
+
+    .btn-salvar-produto:hover {
+        background-color: #ff8001;
+    }
+
+    /* Definição da grid dos produtos */
+    .produto-grid {
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        gap: 60px;
+        max-width: 1600px;
+        margin: 80px auto; /* Ajuste para criar espaçamento e centralizar a grade */
+        margin-top: 10px; /* Reduz a margem entre filtros e produtos */
+        padding: 20px;
+    }
+    
+    @media (min-width: 768px) {
+        .produto-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        .produto-grid {
+            grid-template-columns: repeat(4, 1fr); /* Alteração para exibir quatro colunas em telas maiores */
+        }
+    }
+    
+
+
+    /* Estilo do item do produto */
+    .produto-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Garante que o conteúdo seja distribuído verticalmente */
+        gap: 10px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 5px 0px 10px rgb(255, 0, 0);
+        transition: transform 0,9s ease, box-shadow 0,9s ease;
+        height: 100%; /* Para garantir o uso completo do espaço vertical */
+        position: relative; /* Para facilitar o posicionamento dos botões */
+    }
+    .produto-item {
+        flex-direction: column; /* Para telas menores, o conteúdo será empilhado verticalmente */
+        align-items: center; 
+        text-align: center;
+    }
+    
+    .produto-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    @media (min-width: 768px) {
+        .produto-item {
+            flex-direction: row; /* A partir de telas médias, os itens ficam lado a lado */
+            text-align: left;
+        }
+    }
+    .produto-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgb(211, 88, 17);
+    }
+
+    /* Imagem do produto */
+    .produto-imagem {
+        width: 150px; /* Ajuste de largura */
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .produto-imagem {
+        width: 100%;
+        height: auto;
+        max-height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    @media (min-width: 768px) {
+        .produto-imagem {
+            width: 150px; /* Retorna ao tamanho maior em telas médias */
+            height: 150px;
+        }
+    }
+    .produto-imagem:hover {
+        transform: scale(1.1) rotate(-2deg);
+    }
+
+
+    /* Detalhes do produto */
+    .produto-info {
+        margin-top: 15px;
+        flex-grow: 1; /* Faz o produto-info crescer para ocupar o espaço disponível */
+    }
+
+    .produto-descricao,.produto-categoria,.produto-estoque,.produto-preco {
+     font-size: 0.9rem;
+     color: #555;
+     margin-bottom: 5px;
+    }
+    
+    .produto-preco {
+        font-weight: bold;
+        font-size: 1.1rem;
+        color: #000;
+    }
+    .produto-nome {
+        font-weight: bold;
+        font-size: 1.25rem;
+        margin-bottom: 5px;
+    }
+    
+    /* Botões Editar e Excluir */
+.produto-botoes {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    color: #ff0000;
+    justify-content: center; /* Centraliza os botões na parte inferior do container */
+    position: absolute; /* Posiciona a div de botões */
+    bottom: 05px; /* Fixa os botões na parte inferior do container */
+    left: 0;
+    right: 0;
+}
+
+
+.btn-acao,
+.btn-carrinho {
+    background-color: #ff0a0a;
+    color: #fff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+}
+
+.btn-carrinho i,
+.btn-acao i {
+    margin-right: 5px;
+}
+
+.btn-acao:hover,
+.btn-carrinho:hover {
+    background-color: #ff7b00;
+}
+
+.filtro-container {
+    display: flex;
+    flex-wrap: wrap; /* Permite os elementos quebrarem linha em telas menores */
+    justify-content: center; /* Deixa os elementos alinhados à esquerda */
+    align-items: center;
+    gap: 10px; /* Reduz a distância entre os elementos */
+    max-width: 1200px;
+    margin: 10px auto; /* Reduz a margem geral da seção */
+    padding: 10px 20px; /* Ajuste o preenchimento da seção */
+}
+
+#pesquisa-produto, #categoria-filtro {
+    padding: 15px;
+    font-size: 1rem;
+    border: 4px solid #ff2e2e;
+    border-radius: 15px;
+    max-width: 250px; /* Defina um tamanho máximo para ambos */
+    width: 100%; /* Certifique-se de que ambos ocupem o mesmo espaço */
+    box-sizing: border-box; /* Inclui a borda e o padding na largura total */
+    margin-bottom: 5px; /* Reduz o espaçamento inferior */
+}
+.filtro-container:hover {
+    color: #ee7d3c;
+
+}
+/* Estilo do título "Produtos Disponíveis" */
+.titulo-produtos {
+    font-size: 2.0em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+    color: #000000;
+}

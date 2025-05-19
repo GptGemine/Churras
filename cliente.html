@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Digital - Cliente</title>
+    <link rel="stylesheet" href="cliente.css">
+
+
+    <link rel="icon" href="uploads/Logo2.jpg" type="image/png">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <img src="uploads/Logo2-removebg-preview.png" alt="Logo" class="logo" />
+            <h1 class="titulo">Bora d' Churras</h1>
+            <span class="endereco">Rua Seu Endereço, nº 10, Seu Bairro - Cidade/UF</span>
+            <div id="date-span" class="horario">
+                <span>Seg à Dom - 18:00 às 22:00</span>
+            </div>
+        </div>
+    </header>
+    
+    <section id="filtro-pesquisa" class="filtro-container">
+        <input type="text" id="pesquisa-produto" placeholder="Buscar produto..." oninput="filtrarProdutos()" />
+        <select id="categoria-filtro" onchange="filtrarProdutos()">
+            <option value="">Todas as Categorias</option>
+            <option value="Promoção do dia">Promoção do dia</option>
+            <option value="Bovina">Bovina</option>
+            <option value="Aves">Aves</option>
+            <option value="Suínos">Suínos</option>
+            <option value="Peixes">Peixes</option>
+        </select>
+    </section>
+    
+    <h2 class="titulo-produtos">Produtos Disponíveis</h2>
+
+    <!-- Lista de Produtos -->
+    <main class="container">
+        <section id="product-list">
+            <div id="produtos-container" class="produto-grid">
+                <!-- Produtos carregados dinamicamente -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- Pop-up para Adicionar ao Carrinho -->
+    <div id="add-to-cart-popup" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddToCartPopup()">&times;</span>
+            <h2>Adicionar ao Carrinho</h2>
+    
+            <div class="input-group">
+                <label for="desired-value">Valor desejado (em R$):</label>
+                <input type="number" id="desired-value" placeholder="Digite o valor desejado em R$" oninput="updateQuantityFromValue()" min="1" step="0.01">
+            </div>
+    
+            <div class="input-group">
+                <label for="quantity">Quantidade (em kg):</label>
+                <input type="number" id="quantity" placeholder="Quantidade em kg" oninput="updateTotalPriceFromKg()" min="0.1" step="0.1">
+            </div>
+    
+            <div class="input-group">
+                <label for="cut">Tipo de Corte:</label>
+                <select id="cut">
+                    <option value="peça">Peça</option>
+                    <option value="grelha">Para Grelha</option>
+                    <option value="bife">Bife</option>
+                </select>
+            </div>
+    
+            <p id="total-price">Total: R$ 0,00</p>
+            <button onclick="confirmAddToCart()">Adicionar ao Carrinho</button>
+        </div>
+    </div>
+
+    <!-- Área para exibir o carrinho -->
+    <div id="cart-section" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCart()">&times;</span>
+            <h2>Seu Carrinho</h2>
+            <div id="cart-items"></div>
+            <button onclick="showPopup()">Finalizar Pedido</button>
+        </div>
+    </div>
+
+    <!-- Pop-up para dados de entrega -->
+    <div id="popup" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closePopup()">&times;</span>
+            <h2>Dados de Entrega</h2>
+    
+            <div class="input-group">
+                <label for="address">Endereço:</label>
+                <input type="text" id="address" placeholder="Digite seu endereço completo">
+            </div>
+    
+            <div class="input-group">
+                <label for="payment">Forma de Pagamento:</label>
+                <select id="payment">
+                    <option value="cartao-credito">Cartão de Crédito</option>
+                    <option value="cartao-debito">Cartão de Débito</option>
+                    <option value="pix">Pix</option>
+                </select>
+            </div>
+    
+            <button id="submit-order" onclick="finalizeOrder()">Enviar Pedido</button>
+        </div>
+    </div>
+
+    <!-- Botão de Carrinho -->
+    <footer class="footer">
+        <button class="btn-carrinho" onclick="showCart()">
+            <i class="fa fa-shopping-cart"></i> Carrinho (<span id="cart-count">0</span>)
+        </button>
+    </footer>
+    
+    <!-- Footer de direitos reservados -->
+    <footer>
+        <p>&copy; 2024 Açougue Digital. Todos os direitos reservados para Rayan&Marcos.</p>
+    </footer>
+<!-- BOTÃO FLUTUANTE -->
+<button id="chat-toggle" class="chat-toggle">
+  <img src="uploads/chatbot-icon.png" alt="Chatbot" style="width:32px; height:32px;">
+</button>
+
+
+
+<!-- CONTAINER DO CHAT -->
+<div id="chatbot" class="chatbot hidden">
+  <div id="chat-header" class="chat-header">
+    <span>Assistente de Cortes</span>
+    <button id="chat-close" class="chat-close">×</button>
+  </div>
+  <div id="chat-body" class="chat-body"></div>
+</div>
+
+
+
+    <script src="app.js"></script>
+</body>
+</html>
