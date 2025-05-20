@@ -8,6 +8,11 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
+app.use(express.static(path.join(__dirname, "public")));
+app.get(["/", "/*"], (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 // Middleware para habilitar o CORS
 app.use(cors());
 app.use(bodyParser.json());
