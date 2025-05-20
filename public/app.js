@@ -4,7 +4,7 @@ let produtosCarregados = []; // Para armazenar os produtos originais
 // Função para adicionar o produto ao carrinho (no banco de dados)
 async function addItemToDatabaseCart(produtoId, quantidade) {
     try {
-        const response = await fetch('http://localhost:3000/api/carrinho', {
+        const response = await fetch('/api/carrinho', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ async function finalizeOrder() {
 
     try {
         // Chama a API para finalizar o pedido no banco de dados
-        const response = await fetch('http://localhost:3000/api/finalizar-pedido', {
+        const response = await fetch('/api/finalizar-pedido', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -184,12 +184,12 @@ async function salvarProduto(event) {
     try {
         let response;
         if (produtoId) {
-            response = await fetch(`http://localhost:3000/api/produtos/${produtoId}`, {
+            response = await fetch(`/api/produtos/${produtoId}`, {
                 method: 'PUT',
                 body: formData
             });
         } else {
-            response = await fetch('http://localhost:3000/api/produtos', {
+            response = await fetch('/api/produtos', {
                 method: 'POST',
                 body: formData
             });
@@ -290,7 +290,7 @@ function closePopup() {
 // Função para carregar produtos
 async function carregarProdutos() {
     try {
-        const response = await fetch('http://localhost:3000/api/produtos');
+        const response = await fetch('/api/produtos');
         if (!response.ok) throw new Error('Erro ao carregar produtos.');
         const produtos = await response.json();
         produtosCarregados = produtos; // Armazena os produtos originais
@@ -315,7 +315,7 @@ function renderizarProdutos(produtos) {
         productItem.classList.add('produto-item');
 
         productItem.innerHTML = `
-            <img src="http://localhost:3000/uploads/${produto.imagem}" alt="${produto.nome}" class="produto-imagem">
+            <img src="/uploads/${produto.imagem}" alt="${produto.nome}" class="produto-imagem">
             <div class="produto-info">
                 <p class="produto-nome">${produto.nome}</p>
                 <p class="produto-descricao">${produto.descricao}</p>
@@ -346,7 +346,7 @@ async function login(event) {
     const role = document.getElementById('role').value;
 
     try {
-        const response = await fetch('http://localhost:3000/api/login', {
+        const response = await fetch('/api/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ async function registerUser(event) {
     const password = document.getElementById('password').value;
 
     try {
-        const response = await fetch('http://localhost:3000/api/register', {
+        const response = await fetch('/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -401,7 +401,7 @@ async function registerUser(event) {
 
 async function buscarProduto(id) {
     try {
-        const response = await fetch(`http://localhost:3000/api/produtos/${id}`);
+        const response = await fetch(`/api/produtos/${id}`);
         if (!response.ok) throw new Error('Produto não encontrado.');
         return await response.json();
     } catch (error) {
@@ -412,7 +412,7 @@ async function buscarProduto(id) {
 async function excluirProduto(id) {
     if (confirm('Tem certeza que deseja excluir este produto?')) {
         try {
-            const response = await fetch(`http://localhost:3000/api/produtos/${id}`, { method: 'DELETE' });
+            const response = await fetch(`/api/produtos/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Erro ao excluir o produto.');
 
             alert('Produto excluído com sucesso');
@@ -744,12 +744,16 @@ function renderBot() {
 }
 
 // 3. Toggle do chat
-document.getElementById('chat-toggle').addEventListener('click', () => {
-  document.getElementById('chatbot').classList.toggle('hidden');
-  if (!document.getElementById('chatbot').classList.contains('hidden')) {
-    renderBot();
-  }
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('chat-toggle')?.addEventListener('click', () => {
+    document.getElementById('chatbot').classList.toggle('hidden');
+    if (!document.getElementById('chatbot').classList.contains('hidden')) {
+      renderBot();
+    }
+  });
+
+  document.getElementById('chat-close')?.addEventListener('click', () => {
+    document.getElementById('chatbot').classList.add('hidden');
+  });
 });
-document.getElementById('chat-close').addEventListener('click', () => {
-  document.getElementById('chatbot').classList.add('hidden');
-});
+
