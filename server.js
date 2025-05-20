@@ -24,7 +24,7 @@ pool.on('connect', () => console.log('Conectado ao banco de dados Postgres!'));
 // Configuração de armazenamento para imagens com multer
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, ${Date.now()}${path.extname(file.originalname)})
+  filename: (req, file, cb) => cb(null, `${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
 
@@ -145,12 +145,12 @@ app.put('/api/produtos/:id', upload.single('imagem'), async (req, res) => {
   try {
     if (imagem) {
       await pool.query(
-        UPDATE produtos SET nome=$1, descricao=$2, preco=$3, categoria=$4, estoque=$5, imagem=$6 WHERE id=$7,
+        `UPDATE produtos SET nome=$1, descricao=$2, preco=$3, categoria=$4, estoque=$5, imagem=$6 WHERE id=$7`,
         [nome, descricao, preco, categoria, estoque, imagem, id]
       );
     } else {
       await pool.query(
-        UPDATE produtos SET nome=$1, descricao=$2, preco=$3, categoria=$4, estoque=$5 WHERE id=$6,
+        `UPDATE produtos SET nome=$1, descricao=$2, preco=$3, categoria=$4, estoque=$5 WHERE id=$6`,
         [nome, descricao, preco, categoria, estoque, id]
       );
     }
@@ -176,4 +176,4 @@ app.delete('/api/produtos/:id', async (req, res) => {
 
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Servidor rodando na porta ${PORT}));
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
