@@ -1,4 +1,3 @@
-// Variável de carrinho e função de adicionar ao carrinho
 var cart = [];
 let produtosCarregados = []; // Para armazenar os produtos originais
 
