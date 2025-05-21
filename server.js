@@ -8,13 +8,8 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
-app.use(express.static(path.join(__dirname, "public")));
-app.get(["/", "/*"], (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Middleware para habilitar o CORS
-app.use(cors());
+// Middleware para habilitar o CORS e body parsing
+tapp.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -33,7 +28,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Rotas
+// Rotas de API (devem estar antes do static e fallback)
 
 // Adicionar item ao carrinho
 app.post('/api/carrinho', async (req, res) => {
@@ -108,39 +103,6 @@ app.post('/api/produtos', upload.single('imagem'), async (req, res) => {
   }
 });
 
-// Servir imagens da pasta 'uploads'
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
-// Registro de usuários
-app.post('/api/register', async (req, res) => {
-  const { username, password, role } = req.body;
-  if (role !== 'cliente') return res.status(403).json({ error: 'Apenas contas de cliente podem ser criadas.' });
-  try {
-    const { rows } = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
-    if (rows.length > 0) return res.status(409).json({ error: 'Nome de usuário já existe.' });
-    await pool.query('INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3)', [username, password, role]);
-    res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
-  } catch (err) {
-    console.error('Erro ao registrar usuário:', err);
-    res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
-  }
-});
-
-// Autenticação de login
-app.post('/api/login', async (req, res) => {
-  const { username, password, role } = req.body;
-  try {
-    const { rows } = await pool.query('SELECT * FROM usuarios WHERE username = $1 AND role = $2', [username, role]);
-    if (rows.length === 0) return res.status(404).json({ error: 'Usuário não encontrado.' });
-    const user = rows[0];
-    if (password === user.password) res.status(200).json({ message: 'Login bem-sucedido!' });
-    else res.status(401).json({ error: 'Senha incorreta.' });
-  } catch (err) {
-    console.error('Erro ao autenticar:', err);
-    res.status(500).json({ error: 'Erro ao autenticar.' });
-  }
-});
-
 // Editar produto
 app.put('/api/produtos/:id', upload.single('imagem'), async (req, res) => {
   const { id } = req.params;
@@ -179,6 +141,32 @@ app.delete('/api/produtos/:id', async (req, res) => {
   }
 });
 
-// Iniciar o servidor
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+// Registro de usuários
+app.post('/api/register', async (req, res) => {
+  const { username, password, role } = req.body;
+  if (role !== 'cliente') return res.status(403).json({ error: 'Apenas contas de cliente podem ser criadas.' });
+  try {
+    const { rows } = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
+    if (rows.length > 0) return res.status(409).json({ error: 'Nome de usuário já existe.' });
+    await pool.query('INSERT INTO usuarios (username, password, role) VALUES ($1, $2, $3)', [username, password, role]);
+    res.status(201).json({ message: 'Usuário cadastrado com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao registrar usuário:', err);
+    res.status(500).json({ error: 'Erro ao cadastrar usuário.' });
+  }
+});
+
+// Autenticação de login
+app.post('/api/login', async (req, res) => {
+  const { username, password, role } = req.body;
+  try {
+    const { rows } = await pool.query('SELECT * FROM usuarios WHERE username = $1 AND role = $2', [username, role]);
+    if (rows.length === 0) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    const user = rows[0];
+    if (password === user.password) res.status(200).json({ message: 'Login bem-sucedido!' });
+    else res.status(401).json({ error: 'Senha incorreta.' });
+  } catch (err) {
+    console.error('Erro ao autenticar:', err);
+        res.status(500).json({ error: 'Erro ao autenticar usuário.' });
+      }
+    });
