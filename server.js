@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg');
 
 // Middleware para habilitar o CORS e body parsing
-tapp.use(cors());
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -18,7 +18,6 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
-
 pool.on('connect', () => console.log('Conectado ao banco de dados Postgres!'));
 
 // Configuração de armazenamento para imagens com multer
@@ -28,7 +27,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Rotas de API (devem estar antes do static e fallback)
+// Rotas de API (devem estar antes de static e fallback)
 
 // Adicionar item ao carrinho
 app.post('/api/carrinho', async (req, res) => {
@@ -92,8 +91,7 @@ app.post('/api/produtos', upload.single('imagem'), async (req, res) => {
   }
   try {
     await pool.query(
-      `INSERT INTO produtos (nome, descricao, preco, categoria, imagem, estoque)
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO produtos (nome, descricao, preco, categoria, imagem, estoque) VALUES ($1, $2, $3, $4, $5, $6)`,
       [nome, descricao, preco, categoria, imagem, estoque]
     );
     res.status(201).json({ message: 'Produto cadastrado com sucesso!' });
@@ -108,7 +106,9 @@ app.put('/api/produtos/:id', upload.single('imagem'), async (req, res) => {
   const { id } = req.params;
   const { nome, descricao, preco, categoria, estoque } = req.body;
   const imagem = req.file ? req.file.filename : null;
-  if (!nome || !descricao || !preco || !categoria || !estoque) return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+  if (!nome || !descricao || !preco || !categoria || !estoque) {
+    return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
+  }
   try {
     if (imagem) {
       await pool.query(
@@ -161,12 +161,38 @@ app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
   try {
     const { rows } = await pool.query('SELECT * FROM usuarios WHERE username = $1 AND role = $2', [username, role]);
-    if (rows.length === 0) return res.status(404).json({ error: 'Usuário não encontrado.' });
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Usuário não encontrado.' });
+    }
     const user = rows[0];
-    if (password === user.password) res.status(200).json({ message: 'Login bem-sucedido!' });
-    else res.status(401).json({ error: 'Senha incorreta.' });
+    if (password === user.password) {
+      return res.status(200).json({ message: 'Login bem-sucedido!' });
+    } else {
+      return res.status(401).json({ error: 'Senha incorreta.' });
+    }
   } catch (err) {
     console.error('Erro ao autenticar:', err);
-        res.status(500).json({ error: 'Erro ao autenticar usuário.' });
-      }
-    });
+    res.status(500).json({ error: 'Erro ao autenticar.' });
+  }
+});
+
+// Servir uploads de imagens
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Servir arquivos estáticos da pasta public
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback para SPA (rotas que não sejam da API)
+app.get('*', (req, res, next) => {
+  if (req.path.startsWith('/api/')) return next();
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Tratamento de 404 para APIs
+app.use('/api/*', (req, res) => {
+  res.status(404).json({ error: 'Rota de API não encontrada.' });
+});
+
+// Iniciar o servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
