@@ -315,7 +315,7 @@ function renderizarProdutos(produtos) {
         productItem.classList.add('produto-item');
 
         productItem.innerHTML = `
-            <img src="/uploads/${produto.imagem}" alt="${produto.nome}" class="produto-imagem">
+            <img src="${produto.imagem}" alt="${produto.nome}" class="produto-imagem">
             <div class="produto-info">
                 <p class="produto-nome">${produto.nome}</p>
                 <p class="produto-descricao">${produto.descricao}</p>
