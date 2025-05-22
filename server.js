@@ -5,6 +5,10 @@ const multer  = require('multer');
 const bodyParser = require('body-parser');
 const cors    = require('cors');
 const path    = require('path');
+<<<<<<< HEAD
+=======
+const bcrypt  = require('bcrypt');
+>>>>>>> origin/main
 const { Pool } = require('pg');
 
 // 1) Middlewares globais
@@ -19,6 +23,7 @@ const pool = new Pool({
 });
 pool.on('connect', () => console.log('Conectado ao banco de dados Postgres!'));
 
+<<<<<<< HEAD
 // 3) Configuração do Cloudinary
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
@@ -37,11 +42,25 @@ const storage = new CloudinaryStorage({
     folder: 'produtos',
     allowed_formats: ['jpg', 'png'],
     transformation: [{ width: 800, crop: 'limit' }]
+=======
+// 3) Configuração do Multer para gravar em public/uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, 'public', 'uploads'));
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueName);
+>>>>>>> origin/main
   }
 });
 const upload = multer({ storage });
 
+<<<<<<< HEAD
 // 5) Rotas de API (todas antes de servir arquivos estáticos)
+=======
+// 4) Rotas de API (todas antes de servir arquivos estáticos)
+>>>>>>> origin/main
 
 // Adicionar item ao carrinho
 app.post('/api/carrinho', async (req, res) => {
@@ -72,6 +91,7 @@ app.post('/api/finalizar-pedido', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Buscar todos os produtos, incluindo URL da imagem (Cloudinary)
 app.get('/api/produtos', async (req, res) => {
   try {
@@ -79,6 +99,16 @@ app.get('/api/produtos', async (req, res) => {
     const produtos = rows.map(p => ({
       ...p,
       imagem_url: p.imagem  // p.imagem já armazena o URL do Cloudinary
+=======
+// Buscar todos os produtos, incluindo URL da imagem
+app.get('/api/produtos', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT * FROM produtos ORDER BY id');
+    const host = `${req.protocol}://${req.get('host')}`;
+    const produtos = rows.map(p => ({
+      ...p,
+      imagem_url: `${host}/uploads/${p.imagem}`
+>>>>>>> origin/main
     }));
     res.json(produtos);
   } catch (err) {
@@ -96,9 +126,16 @@ app.get('/api/produtos/:id', async (req, res) => {
       return res.status(404).json({ error: 'Produto não encontrado.' });
     }
     const p = rows[0];
+<<<<<<< HEAD
     res.json({
       ...p,
       imagem_url: p.imagem
+=======
+    const host = `${req.protocol}://${req.get('host')}`;
+    res.json({
+      ...p,
+      imagem_url: `${host}/uploads/${p.imagem}`
+>>>>>>> origin/main
     });
   } catch (err) {
     console.error('Erro ao buscar produto:', err);
@@ -106,13 +143,21 @@ app.get('/api/produtos/:id', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // Cadastrar produto com upload de imagem para Cloudinary
+=======
+// Cadastrar produto com upload de imagem
+>>>>>>> origin/main
 app.post('/api/produtos', upload.single('imagem'), async (req, res) => {
   const { nome, descricao, preco, categoria, estoque } = req.body;
   if (!req.file) {
     return res.status(400).json({ error: 'Envie uma imagem do produto.' });
   }
+<<<<<<< HEAD
   const imagem = req.file.path;  // URL retornada pelo Cloudinary
+=======
+  const imagem = req.file.filename;
+>>>>>>> origin/main
   if (!nome || !descricao || !preco || !categoria || isNaN(estoque)) {
     return res.status(400).json({ error: 'Todos os campos são obrigatórios e estoque deve ser um número.' });
   }
@@ -133,7 +178,11 @@ app.post('/api/produtos', upload.single('imagem'), async (req, res) => {
 app.put('/api/produtos/:id', upload.single('imagem'), async (req, res) => {
   const { id } = req.params;
   const { nome, descricao, preco, categoria, estoque } = req.body;
+<<<<<<< HEAD
   const imagem = req.file ? req.file.path : null;
+=======
+  const imagem = req.file ? req.file.filename : null;
+>>>>>>> origin/main
   if (!nome || !descricao || !preco || !categoria || isNaN(estoque)) {
     return res.status(400).json({ error: 'Todos os campos são obrigatórios.' });
   }
@@ -218,20 +267,35 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 // 6) Servir arquivos estáticos (inclui public/uploads)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // 7) Fallback para SPA (rotas que não sejam de API)
+=======
+// 5) Servir arquivos estáticos (inclui public/uploads)
+app.use(express.static(path.join(__dirname, 'public')));
+
+// 6) Fallback para SPA (rotas que não sejam de API)
+>>>>>>> origin/main
 app.get('*', (req, res, next) => {
   if (req.path.startsWith('/api/')) return next();
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+<<<<<<< HEAD
 // 8) 404 para APIs não encontradas
+=======
+// 7) 404 para APIs não encontradas
+>>>>>>> origin/main
 app.use('/api/*', (req, res) => {
   res.status(404).json({ error: 'Rota de API não encontrada.' });
 });
 
+<<<<<<< HEAD
 // 9) Iniciar o servidor
+=======
+// 8) Iniciar o servidor
+>>>>>>> origin/main
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
