@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardápio Digital - Açougue</title>
+    <link rel="stylesheet" href="/Styles/comerciante.css">
+    <link rel="icon" href="uploads/Logo2.jpg" type="image/png">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <img src="uploads/Logo2-removebg-preview.png" alt="Logo" class="logo" />
+            <h1 class="titulo">Bora d' Churras</h1>
+            <span class="endereco">Rua Seu Endereço, nº 10, Seu Bairro - Cidade/UF</span>
+            <div id="date-span" class="horario">
+                <span>Seg à Dom - 18:00 às 22:00</span>
+            </div>
+        </div>
+    </header>
+    
+    <section id="filtro-pesquisa" class="filtro-container">
+        <input type="text" id="pesquisa-produto" placeholder="Buscar produto..." oninput="filtrarProdutos()" />
+        <select id="categoria-filtro" onchange="filtrarProdutos()">
+            <option value="">Todas as Categorias</option>
+            <option value="Promoção do dia">Promoção do dia</option>
+            <option value="Bovina">Bovina</option>
+            <option value="Aves">Aves</option>
+            <option value="Suínos">Suínos</option>
+            <option value="Peixes">Peixes</option>
+        </select>
+    </section>
+    
+    <h2 class="titulo-produtos">Produtos Disponíveis</h2> <!-- Adicione esta linha -->
+
+    <!-- Modal para cadastro de produtos -->
+    <div id="product-popup" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeProductPopup()">&times;</span>
+            <h2 id="popup-title">Cadastrar Produto</h2>
+
+            <form id="cadastro-produto" onsubmit="salvarProduto(event)" enctype="multipart/form-data">
+                <input type="hidden" id="produto-id" name="produto-id" />
+                <input type="text" id="nome-produto" name="nome" placeholder="Nome do produto" required />
+                <input type="text" id="descricao-produto" name="descricao" placeholder="Descrição"/>
+                <input type="number" id="preco-produto" name="preco" placeholder="Preço" step="any" required />
+                <label for="categoria-produto">Categoria:</label>
+                <select id="categoria-produto" name="categoria" required>
+                    <option value="Promoção do dia">Promoção do dia</option>
+                    <option value="Bovina">Bovina</option>
+                    <option value="Aves">Aves</option>
+                    <option value="Suínos">Suínos</option>
+                    <option value="Peixes">Peixes</option>
+                    
+                </select>
+                <input type="number" id="estoque-produto" name="estoque" placeholder="Estoque (KG)" required />
+                <input type="file" id="imagem-produto" name="imagem" accept="image/*" />
+                <button type="submit" class="btn-salvar-produto">Salvar Produto</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Lista de Produtos -->
+    <main class="container">
+        <section id="product-list">
+            <div id="produtos-container" class="produto-grid">
+                <!-- Produtos carregados dinamicamente -->
+            </div>
+        </section>
+    </main>
+    
+    <!-- Botão de Cadastro de Produto -->
+    <footer class="footer">
+        <button class="botao-cadastrar" onclick="showProductPopup()">
+            Cadastrar Produto
+        </button>
+    </footer>
+    
+    <!-- Footer de direitos reservados -->
+    <footer>
+        <p>&copy; 2024 Açougue Digital. Todos os direitos reservados para Rayan&Marcos.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
