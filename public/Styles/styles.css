@@ -30,6 +30,7 @@ header h1 {
     max-width: 100%; /* Ocupar toda a tela em mobile */
 }
 
+
 .product-item {
     display: flex;
     flex-direction: column;
