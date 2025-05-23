@@ -35,7 +35,7 @@ const storage = new CloudinaryStorage({
   cloudinary,
   params: {
     folder: 'produtos',
-    allowed_formats: ['jpg','png'],
+    allowed_formats: ['jpg','jpeg','png','webp','gif','bmp'],
     transformation: [{ width: 800, crop: 'limit' }]
   }
 });
