@@ -63,12 +63,58 @@ app.post('/api/carrinho', async (req, res) => {
 
 // Finalizar pedido
 app.post('/api/finalizar-pedido', async (req, res) => {
+  const { endereco, pagamento, itens } = req.body;
+
+  if (!endereco || !pagamento || !Array.isArray(itens) || itens.length === 0) {
+    return res.status(400).json({ error: 'Dados incompletos para o pedido.' });
+  }
+
+  const client = await pool.connect();
   try {
-    await pool.query('CALL FinalizarPedido()');
-    res.status(200).json({ message: 'Pedido finalizado com sucesso!' });
+    await client.query('BEGIN');
+
+    // Criar pedido com status 'Pendente'
+    const pedidoResult = await client.query(
+      'INSERT INTO pedidos (status) VALUES ($1) RETURNING id',
+      ['Pendente']
+    );
+    const pedidoId = pedidoResult.rows[0].id;
+
+    for (const item of itens) {
+      const { id: produto_id, quantity: quantidade } = item;
+
+      // Verifica se há estoque suficiente
+      const estoqueResult = await client.query(
+        'SELECT estoque FROM produtos WHERE id = $1',
+        [produto_id]
+      );
+      const estoqueAtual = estoqueResult.rows[0]?.estoque || 0;
+
+      if (estoqueAtual < quantidade) {
+        throw new Error(`Estoque insuficiente para o produto ID ${produto_id}.`);
+      }
+
+      // Desconta do estoque
+      await client.query(
+        'UPDATE produtos SET estoque = estoque - $1 WHERE id = $2',
+        [quantidade, produto_id]
+      );
+
+      // Registra item do pedido
+      await client.query(
+        'INSERT INTO pedido_item (pedido_id, produto_id, quantidade) VALUES ($1, $2, $3)',
+        [pedidoId, produto_id, quantidade]
+      );
+    }
+
+    await client.query('COMMIT');
+    res.status(201).json({ message: 'Pedido finalizado com sucesso!', pedidoId });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erro ao finalizar pedido.' });
+    await client.query('ROLLBACK');
+    console.error('Erro ao finalizar pedido:', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
   }
 });
 
@@ -191,6 +237,137 @@ app.post('/api/login', async (req, res) => {
     res.status(500).json({ error: 'Erro ao autenticar.' });
   }
 });
+
+// Listar pedidos
+app.get('/api/pedidos', async (req, res) => {
+  try {
+    const { rows } = await pool.query(`
+      SELECT 
+        p.id as pedido_id,
+        p.status,
+        p.criado_em,
+        pi.produto_id,
+        pr.nome as nome_produto,
+        pi.quantidade
+      FROM pedidos p
+      JOIN pedido_item pi ON pi.pedido_id = p.id
+      JOIN produtos pr ON pr.id = pi.produto_id
+      ORDER BY p.criado_em DESC
+    `);
+
+    const pedidosMap = {};
+    rows.forEach(row => {
+      if (!pedidosMap[row.pedido_id]) {
+        pedidosMap[row.pedido_id] = {
+          id: row.pedido_id,
+          status: row.status,
+          criado_em: row.criado_em,
+          itens: []
+        };
+      }
+      pedidosMap[row.pedido_id].itens.push({
+        produto_id: row.produto_id,
+        nome: row.nome_produto,
+        quantidade: row.quantidade
+      });
+    });
+
+    const pedidos = Object.values(pedidosMap);
+    res.json(pedidos);
+  } catch (err) {
+    console.error('Erro ao buscar pedidos:', err);
+    res.status(500).json({ error: 'Erro ao buscar pedidos.' });
+  }
+});
+
+// Detalhar Pedido
+app.put('/api/pedidos/:id/status', async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (!status) return res.status(400).json({ error: 'Status não fornecido.' });
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Verifica status atual do pedido
+    const pedido = await client.query('SELECT status FROM pedidos WHERE id = $1', [id]);
+    if (pedido.rows.length === 0) {
+      await client.query('ROLLBACK');
+      return res.status(404).json({ error: 'Pedido não encontrado.' });
+    }
+
+    const statusAtual = pedido.rows[0].status;
+
+    // Se mudando para "Cancelado", devolver ao estoque
+    if (status === 'Cancelado' && statusAtual !== 'Cancelado') {
+      const itens = await client.query('SELECT produto_id, quantidade FROM pedido_item WHERE pedido_id = $1', [id]);
+      for (const item of itens.rows) {
+        await client.query(
+          'UPDATE produtos SET estoque = estoque + $1 WHERE id = $2',
+          [item.quantidade, item.produto_id]
+        );
+      }
+    }
+
+    // Atualiza o status
+    await client.query('UPDATE pedidos SET status = $1 WHERE id = $2', [status, id]);
+
+    await client.query('COMMIT');
+    res.status(200).json({ message: 'Status atualizado com sucesso!' });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Erro ao atualizar status do pedido:', err);
+    res.status(500).json({ error: 'Erro ao atualizar status do pedido.' });
+  } finally {
+    client.release();
+  }
+});
+
+// Relatorio de vendas
+app.get('/api/relatorio-vendas', async (req, res) => {
+  const { dataInicio, dataFim, horaInicio, horaFim, categoria } = req.query;
+
+  try {
+    const params = [];
+    let query = `
+      SELECT p.id, pr.nome, pr.categoria, pi.quantidade, pr.preco, p.criado_em
+      FROM pedidos p
+      JOIN pedido_item pi ON pi.pedido_id = p.id
+      JOIN produtos pr ON pr.id = pi.produto_id
+      WHERE p.status != 'Cancelado'
+    `;
+
+    if (dataInicio) {
+      params.push(dataInicio);
+      query += ` AND p.criado_em::date >= $${params.length}`;
+    }
+    if (dataFim) {
+      params.push(dataFim);
+      query += ` AND p.criado_em::date <= $${params.length}`;
+    }
+    if (horaInicio) {
+      params.push(horaInicio);
+      query += ` AND to_char(p.criado_em, 'HH24:MI') >= $${params.length}`;
+    }
+    if (horaFim) {
+      params.push(horaFim);
+      query += ` AND to_char(p.criado_em, 'HH24:MI') <= $${params.length}`;
+    }
+    if (categoria) {
+      params.push(categoria);
+      query += ` AND pr.categoria = $${params.length}`;
+    }
+
+    const { rows } = await pool.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error('Erro ao gerar relatório:', err);
+    res.status(500).json({ error: 'Erro ao gerar relatório.' });
+  }
+});
+
 
 // 6) Servir arquivos estáticos (inclui public)
 app.use(express.static(path.join(__dirname, 'public')));
