@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatório de Vendas</title>
+  <link rel="stylesheet" href="/public/Styles/relatorios.css">
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <h1 class="titulo">Relatório de Vendas</h1>
+    </div>
+  </header>
+
+  <section class="filtro-container">
+    <label>Data início: <input type="date" id="data-inicio" /></label>
+    <label>Data fim: <input type="date" id="data-fim" /></label>
+    <label>Hora início: <input type="time" id="hora-inicio" /></label>
+    <label>Hora fim: <input type="time" id="hora-fim" /></label>
+    <label>Categoria:
+      <select id="categoria">
+        <option value="">Todas</option>
+        <option value="Bovina">Bovina</option>
+        <option value="Aves">Aves</option>
+        <option value="Suínos">Suínos</option>
+        <option value="Peixes">Peixes</option>
+        <option value="Promoção do dia">Promoção do dia</option>
+      </select>
+    </label>
+    <button onclick="carregarRelatorio()">Filtrar</button>
+  </section>
+
+  <main class="container">
+    <h2 class="titulo-produtos">Vendas</h2>
+    <div id="relatorio-container">
+      <!-- Relatório carregado via JavaScript -->
+    </div>
+    <h3 id="total-vendas">Total: R$ 0,00</h3>
+  </main>
+
+  <script src="/public/app.js"></script>
+</body>
+</html>
