@@ -67,7 +67,8 @@ function confirmAddToCart() {
     const cut = document.getElementById('cut').value;
 
     if (quantityKg <= 0 && desiredValue <= 0) {
-        alert('Por favor, insira uma quantidade ou valor válido.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Por favor, insira uma quantidade ou valor válido.');
         return;
     }
 
@@ -82,7 +83,8 @@ function confirmAddToCart() {
     cart.push(item);
     updateCartCount();
     closeAddToCartPopup();
-    alert(`${selectedProduct.nome} adicionado ao carrinho!`);
+    // Usando um modal customizado em vez de alert()
+    showCustomAlert(`${selectedProduct.nome} adicionado ao carrinho!`);
 
     // Chama a função para adicionar o item no carrinho do banco de dados
     addItemToDatabaseCart(selectedProduct.id, parseFloat(quantityKg));
@@ -124,53 +126,51 @@ function closeCart() {
     document.getElementById('cart-section').style.display = 'none';
 }
 
-// Finalizar pedido pelo WhatsApp
+// Função para finalizar pedido (MODIFICADA)
 async function finalizeOrder() {
     const address = document.getElementById('address').value;
     const payment = document.getElementById('payment').value;
 
     if (!address || !payment) {
-        alert('Por favor, preencha o endereço e a forma de pagamento.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Por favor, preencha o endereço e a forma de pagamento.');
         return;
     }
 
     try {
-        // Chama a API para finalizar o pedido no banco de dados
         const response = await fetch('/api/finalizar-pedido', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ endereco: address, pagamento: payment, itens: cart })
         });
 
         if (!response.ok) {
-            // Tenta extrair a mensagem de erro do servidor
             const errorData = await response.json().catch(() => null);
-            const errorMessage = errorData && errorData.error ? errorData.error : 'Erro desconhecido.';
+            const errorMessage = errorData?.error || 'Erro desconhecido.';
             throw new Error(errorMessage);
         }
 
         const data = await response.json();
 
-        // Envia a mensagem para o WhatsApp após o pedido ser finalizado no banco
-        let orderMessage = 'Gostaria de fazer o seguinte pedido:\n';
+        let orderMessage = 'Gostaria de fazer o seguinte pedido:\\n';
         cart.forEach(item => {
-            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\n`;
+            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\\n`;
         });
-        orderMessage += `\nEndereço de entrega: ${address}\nForma de pagamento: ${payment}`;
+        orderMessage += `\\nEndereço de entrega: ${address}\\nForma de pagamento: ${payment}`;
 
         const whatsappLink = `https://api.whatsapp.com/send?phone=5562986030093&text=${encodeURIComponent(orderMessage)}`;
         window.open(whatsappLink, '_blank');
 
-        // Limpa o carrinho local e a interface
         cart = [];
         updateCartCount();
         closePopup();
         closeCart();
-        alert('Pedido finalizado com sucesso!');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Pedido finalizado com sucesso!');
     } catch (error) {
         console.error('Erro ao finalizar pedido:', error);
-        alert(`Erro ao finalizar pedido: ${error.message}`);
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert(`Erro ao finalizar pedido: ${error.message}`);
     }
 }
 
@@ -198,16 +198,19 @@ async function salvarProduto(event) {
         const data = await response.json();
 
         if (response.ok) {
-            alert(data.message);
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert(data.message);
             form.reset();
             document.getElementById('produto-id').value = '';
             carregarProdutos();
         } else {
-            alert(data.error || 'Erro ao salvar o produto.');
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert(data.error || 'Erro ao salvar o produto.');
         }
     } catch (error) {
         console.error('Erro ao salvar o produto:', error);
-        alert('Erro ao salvar o produto.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Erro ao salvar o produto.');
     }
 }
 function showProductPopup(isEditing = false, produto = null) {
@@ -235,7 +238,7 @@ function showProductPopup(isEditing = false, produto = null) {
         nomeProdutoField.value = '';
         descricaoProdutoField.value = '';
         precoProdutoField.value = '';
-        categoriaProdutoField.value = 'Promoção do dia';  // Define uma categoria padrão
+        categoriaProdutoField.value = 'Promoção do dia';   // Define uma categoria padrão
         estoqueProdutoField.value = '';
         imagemProdutoField.value = '';
     }
@@ -256,28 +259,16 @@ async function editarProduto(id) {
         }
     } catch (error) {
         console.error('Erro ao buscar produto:', error);
-        alert('Erro ao buscar produto.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Erro ao buscar produto.');
     }
 }
-
-// Atualize a função editarProduto para abrir o pop-up com os dados do produto
-async function editarProduto(id) {
-    try {
-        const produto = await buscarProduto(id);
-        if (produto) {
-            showProductPopup(true, produto); // Abre o pop-up no modo edição
-        }
-    } catch (error) {
-        console.error('Erro ao buscar produto:', error);
-        alert('Erro ao buscar produto.');
-    }
-}
-
 
 // Funções de pop-up
 function showPopup() {
     if (cart.length === 0) {
-        alert('Adicione itens ao carrinho antes de finalizar o pedido.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Adicione itens ao carrinho antes de finalizar o pedido.');
         return;
     }
     document.getElementById('popup').style.display = 'flex';
@@ -365,11 +356,13 @@ async function login(event) {
             }
         } else {
             // Mostra a mensagem de erro retornada pelo backend
-            alert(data.error || 'Erro ao fazer login.');
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert(data.error || 'Erro ao fazer login.');
         }
     } catch (error) {
         console.error('Erro ao fazer login:', error);
-        alert('Erro ao fazer login.');
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Erro ao fazer login.');
     }
 }
 async function registerUser(event) {
@@ -388,8 +381,9 @@ async function registerUser(event) {
 
         const data = await response.json();
         if (response.ok) {
-            alert('Cadastro realizado com sucesso!');
-            window.location.href = "index.html";  // Redireciona para a tela de login
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert('Cadastro realizado com sucesso!');
+            window.location.href = "index.html";   // Redireciona para a tela de login
         } else {
             document.getElementById('register-error').innerText = data.error || 'Erro ao cadastrar usuário.';
         }
@@ -410,17 +404,21 @@ async function buscarProduto(id) {
 }
 
 async function excluirProduto(id) {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
+    // Usando um modal customizado em vez de confirm()
+    showCustomConfirm('Tem certeza que deseja excluir este produto?', async () => {
         try {
             const response = await fetch(`/api/produtos/${id}`, { method: 'DELETE' });
             if (!response.ok) throw new Error('Erro ao excluir o produto.');
 
-            alert('Produto excluído com sucesso');
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert('Produto excluído com sucesso');
             carregarProdutos();
         } catch (error) {
             console.error('Erro ao excluir o produto:', error);
+            // Usando um modal customizado em vez de alert()
+            showCustomAlert('Erro ao excluir o produto.');
         }
-    }
+    });
 }
 function filtrarProdutos() {
     const pesquisaTermo = document.getElementById('pesquisa-produto').value.toLowerCase();
@@ -436,8 +434,152 @@ function filtrarProdutos() {
     renderizarProdutos(produtosFiltrados);
 }
 
-// Carrega os produtos na inicialização da página
-window.onload = carregarProdutos;
+// Funções para carregar e renderizar pedidos (NOVAS FUNÇÕES)
+async function carregarPedidos() {
+    try {
+        const response = await fetch('/api/pedidos');
+        const data = await response.json();
+        console.log('Resposta recebida de /api/pedidos:', data);
+
+        if (!Array.isArray(data)) {
+            throw new Error('Resposta inválida da API de pedidos.');
+        }
+
+        renderizarPedidos(data);
+    } catch (error) {
+        console.error('Erro ao carregar pedidos:', error);
+        showCustomAlert('Erro ao carregar pedidos. Verifique o servidor.');
+    }
+}
+
+function renderizarPedidos(pedidos) {
+    const container = document.getElementById('pedidos-container');
+    if (!container) return;
+    container.innerHTML = '';
+    pedidos.forEach(pedido => {
+        const div = document.createElement('div');
+        div.className = 'produto-item'; // Reutilizando a classe para estilização
+        div.innerHTML = `
+            <p><strong>Pedido #${pedido.id}</strong></p>
+            <p>Status: 
+                <select onchange="atualizarStatus(${pedido.id}, this.value)">
+                    <option ${pedido.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                    <option ${pedido.status === 'Aceito' ? 'selected' : ''}>Aceito</option>
+                    <option ${pedido.status === 'Em separação' ? 'selected' : ''}>Em separação</option>
+                    <option ${pedido.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+                    <option ${pedido.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+                    <option ${pedido.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+                </select>
+            </p>
+            <ul>
+                ${pedido.itens.map(item => `<li>${item.quantidade}x ${item.nome}</li>`).join('')}
+            </ul>
+        `;
+        container.appendChild(div);
+    });
+}
+
+async function atualizarStatus(id, status) {
+    try {
+        await fetch(`/api/pedidos/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Status atualizado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Erro ao atualizar status.');
+    }
+}
+
+// Funções para modal customizado (substituindo alert/confirm)
+function showCustomAlert(message) {
+    const customAlert = document.createElement('div');
+    customAlert.className = 'custom-alert';
+    customAlert.innerHTML = `
+        <div class="custom-alert-content">
+            <p>${message}</p>
+            <button onclick="this.parentNode.parentNode.remove()">OK</button>
+        </div>
+    `;
+    document.body.appendChild(customAlert);
+}
+
+function showCustomConfirm(message, onConfirm) {
+    const customConfirm = document.createElement('div');
+    customConfirm.className = 'custom-confirm';
+    customConfirm.innerHTML = `
+        <div class="custom-confirm-content">
+            <p>${message}</p>
+            <button onclick="this.parentNode.parentNode.remove(); ${onConfirm.name}();">Sim</button>
+            <button onclick="this.parentNode.parentNode.remove()">Não</button>
+        </div>
+    `;
+    document.body.appendChild(customConfirm);
+}
+
+// Função para carregar o relatório de vendas (MODIFICADA)
+async function carregarRelatorio() {
+  const inicio = document.getElementById('data-inicio').value;
+  const fim = document.getElementById('data-fim').value;
+  const hIni = document.getElementById('hora-inicio').value;
+  const hFim = document.getElementById('hora-fim').value;
+  const categoria = document.getElementById('categoria').value;
+
+  const params = new URLSearchParams();
+  if (inicio) params.append('dataInicio', inicio);
+  if (fim) params.append('dataFim', fim);
+  if (hIni) params.append('horaInicio', hIni);
+  if (hFim) params.append('horaFim', hFim);
+  if (categoria) params.append('categoria', categoria);
+
+  try {
+    const response = await fetch(`${baseURL}/api/relatorio-vendas?${params}`);
+    const relatorio = await response.json();
+
+    const container = document.getElementById('relatorio-container');
+    container.innerHTML = '';
+
+    let total = 0;
+
+    relatorio.forEach(r => {
+      const subtotal = r.preco * r.quantidade;
+      total += subtotal;
+
+      container.innerHTML += `
+        <div class="produto-item">
+          <p><strong>Produto:</strong> ${r.nome}</p>
+          <p><strong>Categoria:</strong> ${r.categoria}</p>
+          <p><strong>Quantidade:</strong> ${r.quantidade}</p>
+          <p><strong>Preço unitário:</strong> R$ ${Number(r.preco).toFixed(2)}</p>
+          <p><strong>Subtotal:</strong> R$ ${subtotal.toFixed(2)}</p>
+          <p><strong>Data/Hora:</strong> ${new Date(r.criado_em).toLocaleString()}</p>
+        </div>
+      `;
+    });
+
+    document.getElementById('total-vendas').innerText = `Total: R$ ${total.toFixed(2)}`;
+  } catch (err) {
+    console.error('Erro ao carregar relatório:', err);
+    showCustomAlert('Erro ao carregar relatório de vendas.');
+  }
+}
+
+// Carrega os produtos na inicialização da página (MODIFICADA)
+window.onload = () => {
+  if (window.location.pathname.includes('comerciante.html') || window.location.pathname.includes('cliente.html')) {
+    carregarProdutos();
+  }
+  if (window.location.pathname.includes('pedidos.html')) {
+    carregarPedidos();
+  }
+  if (window.location.pathname.includes('relatorios.html')) {
+    carregarRelatorio();
+  }
+};
 
 // Event listener de login e formulário de produto
 document.getElementById('login-form')?.addEventListener('submit', login);
