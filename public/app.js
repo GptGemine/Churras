@@ -453,30 +453,35 @@ async function carregarPedidos() {
 }
 
 function renderizarPedidos(pedidos) {
-    const container = document.getElementById('pedidos-container');
-    if (!container) return;
-    container.innerHTML = '';
-    pedidos.forEach(pedido => {
-        const div = document.createElement('div');
-        div.className = 'produto-item'; // Reutilizando a classe para estilização
-        div.innerHTML = `
-            <p><strong>Pedido #${pedido.id}</strong></p>
-            <p>Status: 
-                <select onchange="atualizarStatus(${pedido.id}, this.value)">
-                    <option ${pedido.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
-                    <option ${pedido.status === 'Aceito' ? 'selected' : ''}>Aceito</option>
-                    <option ${pedido.status === 'Em separação' ? 'selected' : ''}>Em separação</option>
-                    <option ${pedido.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
-                    <option ${pedido.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
-                    <option ${pedido.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
-                </select>
-            </p>
-            <ul>
-                ${pedido.itens.map(item => `<li>${item.quantidade}x ${item.nome}</li>`).join('')}
-            </ul>
-        `;
-        container.appendChild(div);
-    });
+  const container = document.getElementById('pedidos-container');
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  // Filtra apenas os pedidos relevantes
+  const pedidosVisiveis = pedidos.filter(p => p.status !== 'Cancelado' && p.status !== 'Finalizado');
+
+  pedidosVisiveis.forEach(pedido => {
+    const div = document.createElement('div');
+    div.className = 'produto-item';
+    div.innerHTML = `
+      <p><strong>Pedido #${pedido.id}</strong></p>
+      <p>Status: 
+        <select onchange="atualizarStatus(${pedido.id}, this.value)">
+          <option ${pedido.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+          <option ${pedido.status === 'Aceito' ? 'selected' : ''}>Aceito</option>
+          <option ${pedido.status === 'Em separação' ? 'selected' : ''}>Em separação</option>
+          <option ${pedido.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+          <option ${pedido.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+          <option ${pedido.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
+        </select>
+      </p>
+      <ul>
+        ${pedido.itens.map(item => `<li>${item.quantidade}x ${item.nome}</li>`).join('')}
+      </ul>
+    `;
+    container.appendChild(div);
+  });
 }
 
 async function atualizarStatus(id, status) {
