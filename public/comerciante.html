@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cardápio Digital - Açougue</title>
-    <link rel="stylesheet" href="/Styles/comerciante.css">
+    <link rel="stylesheet" href="/public/Styles/comerciante.css">
     <link rel="icon" href="uploads/Logo2.jpg" type="image/png">
 </head>
 <body>
@@ -19,7 +19,17 @@
             </div>
         </div>
     </header>
-    
+
+     <!-- Menu de navegação -->
+  <nav class="menu-navegacao">
+    <ul>
+      <li><a href="comerciante.html">Produtos</a></li>
+      <li><a href="pedidos.html">Pedidos</a></li>
+      <li><a href="relatorios.html">Relatorios</a></li>
+    </ul>
+  </nav>
+</header>
+
     <section id="filtro-pesquisa" class="filtro-container">
         <input type="text" id="pesquisa-produto" placeholder="Buscar produto..." oninput="filtrarProdutos()" />
         <select id="categoria-filtro" onchange="filtrarProdutos()">
@@ -31,8 +41,8 @@
             <option value="Peixes">Peixes</option>
         </select>
     </section>
-    
-    <h2 class="titulo-produtos">Produtos Disponíveis</h2> <!-- Adicione esta linha -->
+
+    <h2 class="titulo-produtos">Produtos Disponíveis</h2>
 
     <!-- Modal para cadastro de produtos -->
     <div id="product-popup" class="modal">
@@ -52,13 +62,11 @@
                     <option value="Aves">Aves</option>
                     <option value="Suínos">Suínos</option>
                     <option value="Peixes">Peixes</option>
-                    
                 </select>
                 <input type="number" id="estoque-produto" name="estoque" placeholder="Estoque (KG)" required />
                 <input type="file" id="imagem-produto" name="imagem" accept="image/*" />
                 <button type="submit" class="btn-salvar-produto">Salvar Produto</button>
             </form>
-
         </div>
     </div>
 
@@ -69,20 +77,28 @@
                 <!-- Produtos carregados dinamicamente -->
             </div>
         </section>
+
+        <!-- Lista de Pedidos -->
+        <section id="order-list">
+            <h2 class="titulo-produtos">Pedidos Recebidos</h2>
+            <div id="pedidos-container" class="produto-grid">
+                <!-- Pedidos aparecerão aqui -->
+            </div>
+        </section>
     </main>
-    
+
     <!-- Botão de Cadastro de Produto -->
     <footer class="footer">
         <button class="botao-cadastrar" onclick="showProductPopup()">
             Cadastrar Produto
         </button>
     </footer>
-    
+
     <!-- Footer de direitos reservados -->
     <footer>
         <p>&copy; 2024 Açougue Digital. Todos os direitos reservados para Rayan&Marcos.</p>
     </footer>
 
-    <script src="app.js"></script>
+    <script src="/public/app.js"></script>
 </body>
 </html>
