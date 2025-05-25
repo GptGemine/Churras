@@ -168,3 +168,36 @@ body {
         width: 100%;
     }
 }
+
+
+.menu-navegacao {
+  background-color: #ff0800;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.menu-navegacao ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: inline-flex;
+  gap: 20px;
+}
+
+.menu-navegacao li {
+  display: inline;
+}
+
+.menu-navegacao a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.1em;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+.menu-navegacao a:hover {
+  background-color: #ee7d3c;
+}
