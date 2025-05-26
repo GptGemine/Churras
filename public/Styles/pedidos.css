@@ -302,7 +302,7 @@
 
 /* pedidos.css */
 
-
+    
 /* --- layout de lista minimalista --- */
 
 /* 1) container vira coluna */
@@ -315,14 +315,18 @@
   padding: 0 16px;
 }
 
+#pedidos-container .hover {
+  transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgb(211, 88, 17);
+}
+
 /* 2) cada pedido = linha dividida em três áreas */
 #pedidos-container .produto-item {
   display: grid;
   grid-template-columns: 2fr 1fr auto;
   align-items: center;
   padding: 12px 0;
-  box-shadow: 5px 0px 10px rgb(255, 0, 0);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-bottom: 1px solid #ff0000;
   background: none;        /* tira o background branco */
   box-shadow: none;        /* remove sombra */
 }
