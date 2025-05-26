@@ -245,59 +245,79 @@
 
 /* 1) container vira coluna */
 /* Container de pedidos — escopo */
+/* pedidos.css */
+
+/* 1) Grid de cards igual ao cliente */
+#pedidos-container.produto-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 60px;
+  max-width: 1600px;
+  margin: 80px auto;
+  padding: 20px;
+}
+
+@media (min-width: 768px) {
+  #pedidos-container.produto-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  #pedidos-container.produto-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* 2) Cards de pedido: animações, sombras e layout igual ao cliente */
 #pedidos-container .produto-item {
-  /* layout base (você pode sobrescrever depois) */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 10px;
-
-  /* visual */
   background: #f9f9f9;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 5px 0px 10px rgb(255, 0, 0);
-
-  /* transições */
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-  /* para posicionar botões absolutos */
   position: relative;
   height: 100%;
+  text-align: center;
+  align-items: center;
 }
 
-/* Reaplica o override de mobile → row em telas médias */
 @media (min-width: 768px) {
   #pedidos-container .produto-item {
     flex-direction: row;
     text-align: left;
+    align-items: flex-start;
   }
 }
 
-/* Hover original (escuro) */
+/* Hover: elevação com sombra */
 #pedidos-container .produto-item:hover {
   transform: translateY(-5px);
+  /* sombra original escura */
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  /* se preferir laranja, descomente: */
+  /* box-shadow: 0 8px 16px rgb(211, 88, 17); */
 }
 
-/* Hover variante laranja (fica por cima, se preferir) */
-#pedidos-container .produto-item:hover {
- box-shadow: 0s s s 8px 16px rgb(211, 88, 17);
-}
-
-/* Imagem do produto — transição e hover */
+/* 3) Imagem com transição igual ao cliente */
 #pedidos-container .produto-imagem {
-  width: 150px;
-  height: 150px;
+  width: 100%;
+  max-width: 150px;
+  max-height: 150px;
   border-radius: 8px;
   object-fit: cover;
   transition: transform 0.3s ease;
+  margin-bottom: 10px;
 }
 
 @media (min-width: 768px) {
   #pedidos-container .produto-imagem {
-    width: 150px;
-    height: 150px;
+    margin-bottom: 0;
+    margin-right: 16px;
   }
 }
 
@@ -305,7 +325,44 @@
   transform: scale(1.1) rotate(-2deg);
 }
 
-/* Botões — transição de cor igual ao cliente */
+/* 4) Info e tipografia */
+#pedidos-container .produto-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+#pedidos-container .produto-nome {
+  font-weight: bold;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+#pedidos-container .produto-preco {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #000;
+}
+
+#pedidos-container .produto-descricao,
+#pedidos-container .produto-categoria,
+#pedidos-container .produto-estoque {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* 5) Botões com transição igual ao cliente */
+#pedidos-container .produto-botoes {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
+}
+
 #pedidos-container .btn-carrinho,
 #pedidos-container .btn-acao {
   background-color: #ff0a0a;
@@ -322,17 +379,6 @@
 #pedidos-container .btn-carrinho:hover,
 #pedidos-container .btn-acao:hover {
   background-color: #ff7b00;
-}
-
-/* Produto-botoes — mantém posição absoluta igual ao cliente */
-#pedidos-container .produto-botoes {
-  margin-top: 50px;
-  display: flex;
-  justify-content: center;
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  right: 0;
 }
 
 
