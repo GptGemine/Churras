@@ -302,6 +302,20 @@
 
 /* pedidos.css */
 
+
+/* sombras e transições iguais às do cliente */
+#pedidos-container .produto-item {
+  box-shadow: 5px 0 10px rgb(255, 0, 0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#pedidos-container .produto-item:hover {
+  transform: translateY(-5px);
+  /* escolha uma das duas sombras abaixo: */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  /* box-shadow: 0 8px 16px rgb(211, 88, 17); */
+}
+
 /* --- layout de lista minimalista --- */
 
 /* 1) container vira coluna */
