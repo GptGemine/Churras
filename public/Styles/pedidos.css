@@ -320,7 +320,7 @@
   grid-template-columns: 2fr 1fr auto;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #ff0000;
   background: none;        /* tira o background branco */
   box-shadow: none;        /* remove sombra */
 }
