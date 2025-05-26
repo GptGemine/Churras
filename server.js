@@ -61,53 +61,70 @@ app.post('/api/carrinho', async (req, res) => {
   }
 });
 
-// Função para finalizar pedido (MODIFICADA)
-async function finalizeOrder() {
-    const address = document.getElementById('address').value;
-    const payment = document.getElementById('payment').value;
+app.post('/api/finalizar-pedido', async (req, res) => {
+  const { endereco, pagamento, itens, cliente_nome } = req.body;
 
-    if (!address || !payment) {
-        // Usando um modal customizado em vez de alert()
-        showCustomAlert('Por favor, preencha o endereço e a forma de pagamento.');
-        return;
+  if (!endereco || !pagamento || !cliente_nome || !Array.isArray(itens) || itens.length === 0) {
+    return res.status(400).json({ error: 'Dados incompletos para o pedido.' });
+  }
+
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // Calcula valor total
+    let valor_total = 0;
+    for (const item of itens) {
+      valor_total += item.preco * item.quantity;
     }
 
-    try {
-        const response = await fetch('/api/finalizar-pedido', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ endereco: address, pagamento: payment, itens: cart })
-        });
+    // Cria o pedido com dados adicionais
+    const pedidoResult = await client.query(
+      `INSERT INTO pedidos (status, cliente_nome, endereco, valor_total)
+       VALUES ($1, $2, $3, $4) RETURNING id`,
+      ['Pendente', cliente_nome, endereco, valor_total]
+    );
+    const pedidoId = pedidoResult.rows[0].id;
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => null);
-            const errorMessage = errorData?.error || 'Erro desconhecido.';
-            throw new Error(errorMessage);
-        }
+    // Loop de produtos
+    for (const item of itens) {
+      const { id: produto_id, quantity: quantidade } = item;
 
-        const data = await response.json();
+      // Verifica estoque
+      const estoqueResult = await client.query(
+        'SELECT estoque FROM produtos WHERE id = $1',
+        [produto_id]
+      );
+      const estoqueAtual = estoqueResult.rows[0]?.estoque || 0;
 
-        let orderMessage = 'Gostaria de fazer o seguinte pedido:\\n';
-        cart.forEach(item => {
-            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\\n`;
-        });
-        orderMessage += `\\nEndereço de entrega: ${address}\\nForma de pagamento: ${payment}`;
+      if (estoqueAtual < quantidade) {
+        throw new Error(`Estoque insuficiente para o produto ID ${produto_id}.`);
+      }
 
-        const whatsappLink = `https://api.whatsapp.com/send?phone=5562986030093&text=${encodeURIComponent(orderMessage)}`;
-        window.open(whatsappLink, '_blank');
+      // Atualiza estoque
+      await client.query(
+        'UPDATE produtos SET estoque = estoque - $1 WHERE id = $2',
+        [quantidade, produto_id]
+      );
 
-        cart = [];
-        updateCartCount();
-        closePopup();
-        closeCart();
-        // Usando um modal customizado em vez de alert()
-        showCustomAlert('Pedido finalizado com sucesso!');
-    } catch (error) {
-        console.error('Erro ao finalizar pedido:', error);
-        // Usando um modal customizado em vez de alert()
-        showCustomAlert(`Erro ao finalizar pedido: ${error.message}`);
+      // Registra item
+      await client.query(
+        'INSERT INTO pedido_item (pedido_id, produto_id, quantidade) VALUES ($1, $2, $3)',
+        [pedidoId, produto_id, quantidade]
+      );
     }
-}
+
+    await client.query('COMMIT');
+    res.status(201).json({ message: 'Pedido finalizado com sucesso!', pedidoId });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Erro ao finalizar pedido:', err.message);
+    res.status(500).json({ error: err.message });
+  } finally {
+    client.release();
+  }
+});
+
 
 // Listar produtos
 app.get('/api/produtos', async (req, res) => {
