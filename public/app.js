@@ -161,7 +161,7 @@ async function finalizeOrder() {
 
         let orderMessage = 'Gostaria de fazer o seguinte pedido:\n';
         cart.forEach(item => {
-            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\n`;
+            orderMessage += `${item.quantity} KG ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\n`;
         });
         orderMessage += `\nCliente: ${nomeCliente}\nEndereço: ${address}\nForma de pagamento: ${payment}\nTotal: R$ ${valorTotal.toFixed(2)}`;
 
@@ -485,7 +485,7 @@ function renderizarPedidos(pedidos) {
         </select>
       </p>
       <ul>
-        ${pedido.itens.map(item => `<li>${item.quantidade}x ${item.nome}</li>`).join('')}
+        ${pedido.itens.map(item => `<li>${item.quantidade}KG ${item.nome}</li>`).join('')}
       </ul>
     `;
     container.appendChild(div);
