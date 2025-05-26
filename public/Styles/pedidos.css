@@ -302,6 +302,9 @@
 
 /* pedidos.css */
 
+
+/* --- layout de lista minimalista --- */
+
 /* 1) container vira coluna */
 #pedidos-container {
   display: flex;
@@ -318,13 +321,10 @@
   grid-template-columns: 2fr 1fr auto;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #ff0000;
-  background: none;
-  box-shadow: none;
-  box-shadow: 5px 0 10px rgb(255, 0, 0);
+  box-shadow: 5px 0px 10px rgb(255, 0, 0);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  background: none;        /* tira o background branco */
+  box-shadow: none;        /* remove sombra */
 }
 
 /* 3) nome do produto (primeira coluna) */
