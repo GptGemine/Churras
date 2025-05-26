@@ -411,6 +411,7 @@
   }
 }
 
+
 #pesquisa-produto, #categoria-filtro {
     padding: 15px;
     font-size: 1rem;
@@ -421,10 +422,7 @@
     box-sizing: border-box; /* Inclui a borda e o padding na largura total */
     margin-bottom: 5px; /* Reduz o espaçamento inferior */
 }
-.filtro-container:hover {
-    color: #ee7d3c;
 
-}
 /* Estilo do título "Produtos Disponíveis" */
 .titulo-produtos {
     font-size: 2.0em;
