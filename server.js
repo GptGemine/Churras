@@ -72,45 +72,54 @@ app.post('/api/finalizar-pedido', async (req, res) => {
   try {
     await client.query('BEGIN');
 
-    // Calcula valor total
     let valor_total = 0;
+
+    // Calcular o valor total com base no preço real do banco
     for (const item of itens) {
-      valor_total += item.preco * item.quantity;
+      const { id: produto_id, quantity } = item;
+
+      const result = await client.query(
+        'SELECT preco FROM produtos WHERE id = $1',
+        [produto_id]
+      );
+
+      const preco = parseFloat(result.rows[0]?.preco || 0);
+      valor_total += preco * quantity;
     }
 
-    // Cria o pedido com dados adicionais
+    // Criar pedido
     const pedidoResult = await client.query(
-      `INSERT INTO pedidos (status, cliente_nome, endereco, valor_total)
-       VALUES ($1, $2, $3, $4) RETURNING id`,
+      'INSERT INTO pedidos (status, cliente_nome, endereco, valor_total) VALUES ($1, $2, $3, $4) RETURNING id',
       ['Pendente', cliente_nome, endereco, valor_total]
     );
+
     const pedidoId = pedidoResult.rows[0].id;
 
-    // Loop de produtos
+    // Processar os itens do pedido e atualizar o estoque
     for (const item of itens) {
-      const { id: produto_id, quantity: quantidade } = item;
+      const { id: produto_id, quantity } = item;
 
-      // Verifica estoque
-      const estoqueResult = await client.query(
+      // Verifica o estoque
+      const estoqueRes = await client.query(
         'SELECT estoque FROM produtos WHERE id = $1',
         [produto_id]
       );
-      const estoqueAtual = estoqueResult.rows[0]?.estoque || 0;
+      const estoqueAtual = parseFloat(estoqueRes.rows[0]?.estoque || 0);
 
-      if (estoqueAtual < quantidade) {
+      if (estoqueAtual < quantity) {
         throw new Error(`Estoque insuficiente para o produto ID ${produto_id}.`);
       }
 
-      // Atualiza estoque
+      // Atualiza o estoque
       await client.query(
         'UPDATE produtos SET estoque = estoque - $1 WHERE id = $2',
-        [quantidade, produto_id]
+        [quantity, produto_id]
       );
 
       // Registra item
       await client.query(
         'INSERT INTO pedido_item (pedido_id, produto_id, quantidade) VALUES ($1, $2, $3)',
-        [pedidoId, produto_id, quantidade]
+        [pedidoId, produto_id, quantity]
       );
     }
 
