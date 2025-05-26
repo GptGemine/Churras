@@ -126,22 +126,29 @@ function closeCart() {
     document.getElementById('cart-section').style.display = 'none';
 }
 
-// Função para finalizar pedido (MODIFICADA)
 async function finalizeOrder() {
     const address = document.getElementById('address').value;
     const payment = document.getElementById('payment').value;
+    const nomeCliente = document.getElementById('nome-cliente').value;
 
-    if (!address || !payment) {
-        // Usando um modal customizado em vez de alert()
-        showCustomAlert('Por favor, preencha o endereço e a forma de pagamento.');
+    if (!address || !payment || !nomeCliente) {
+        showCustomAlert('Por favor, preencha todos os campos: nome, endereço e forma de pagamento.');
         return;
     }
+
+    const valorTotal = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     try {
         const response = await fetch('/api/finalizar-pedido', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ endereco: address, pagamento: payment, itens: cart })
+            body: JSON.stringify({
+                endereco: address,
+                pagamento: payment,
+                cliente_nome: nomeCliente,
+                valor_total: valorTotal,
+                itens: cart
+            })
         });
 
         if (!response.ok) {
@@ -152,11 +159,11 @@ async function finalizeOrder() {
 
         const data = await response.json();
 
-        let orderMessage = 'Gostaria de fazer o seguinte pedido:\\n';
+        let orderMessage = 'Gostaria de fazer o seguinte pedido:\n';
         cart.forEach(item => {
-            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\\n`;
+            orderMessage += `${item.quantity} x ${item.name} - R$ ${(item.price * item.quantity).toFixed(2)}\n`;
         });
-        orderMessage += `\\nEndereço de entrega: ${address}\\nForma de pagamento: ${payment}`;
+        orderMessage += `\nCliente: ${nomeCliente}\nEndereço: ${address}\nForma de pagamento: ${payment}\nTotal: R$ ${valorTotal.toFixed(2)}`;
 
         const whatsappLink = `https://api.whatsapp.com/send?phone=5562986030093&text=${encodeURIComponent(orderMessage)}`;
         window.open(whatsappLink, '_blank');
@@ -165,14 +172,13 @@ async function finalizeOrder() {
         updateCartCount();
         closePopup();
         closeCart();
-        // Usando um modal customizado em vez de alert()
         showCustomAlert('Pedido finalizado com sucesso!');
     } catch (error) {
         console.error('Erro ao finalizar pedido:', error);
-        // Usando um modal customizado em vez de alert()
         showCustomAlert(`Erro ao finalizar pedido: ${error.message}`);
     }
 }
+
 
 
 async function salvarProduto(event) {

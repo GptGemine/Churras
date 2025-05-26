@@ -90,6 +90,11 @@
         <div class="modal-content">
             <span class="close" onclick="closePopup()">&times;</span>
             <h2>Dados de Entrega</h2>
+
+
+            <div class="input-group">
+                <input type="text" id="nome-cliente" placeholder="Seu nome" required />
+            </div>
     
             <div class="input-group">
                 <label for="address">Endereço:</label>
@@ -104,6 +109,8 @@
                     <option value="pix">Pix</option>
                 </select>
             </div>
+
+    
     
             <button id="submit-order" onclick="finalizeOrder()">Enviar Pedido</button>
         </div>
