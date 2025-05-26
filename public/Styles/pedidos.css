@@ -302,22 +302,6 @@
 
 /* pedidos.css */
 
-
-/* sombras e transições iguais às do cliente */
-#pedidos-container .produto-item {
-  box-shadow: 5px 0 10px rgb(255, 0, 0);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-#pedidos-container .produto-item:hover {
-  transform: translateY(-5px);
-  /* escolha uma das duas sombras abaixo: */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  /* box-shadow: 0 8px 16px rgb(211, 88, 17); */
-}
-
-/* --- layout de lista minimalista --- */
-
 /* 1) container vira coluna */
 #pedidos-container {
   display: flex;
@@ -335,8 +319,12 @@
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid #ff0000;
-  background: none;        /* tira o background branco */
-  box-shadow: none;        /* remove sombra */
+  background: none;
+  box-shadow: none;
+  box-shadow: 5px 0 10px rgb(255, 0, 0);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 /* 3) nome do produto (primeira coluna) */
