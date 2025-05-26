@@ -302,114 +302,70 @@
 
 /* pedidos.css */
 
-/* Reset mínimo para evitar herança indesejada */
-#pedidos-container,
-#pedidos-container * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* --- layout de lista minimalista --- */
 
-/* 1) Transformar container em lista vertical */
+/* 1) container vira coluna */
 #pedidos-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 900px;
+  gap: 8px;
+  max-width: 800px;
   margin: 40px auto;
   padding: 0 16px;
 }
 
-/* 2) Card de cada pedido */
+/* 2) cada pedido = linha dividida em três áreas */
 #pedidos-container .produto-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
   align-items: center;
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  background: none;        /* tira o background branco */
+  box-shadow: none;        /* remove sombra */
 }
 
-/* Hover suave */
-#pedidos-container .produto-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-}
-
-/* 3) Imagem à esquerda */
-#pedidos-container .produto-imagem {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-right: 16px;
-  flex-shrink: 0;
-}
-
-/* 4) Bloco de informações cresce para preencher espaço */
-#pedidos-container .produto-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-/* Tipografia dos campos */
+/* 3) nome do produto (primeira coluna) */
 #pedidos-container .produto-nome {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: #222;
 }
 
-#pedidos-container .produto-descricao,
-#pedidos-container .produto-categoria,
-#pedidos-container .produto-estoque,
+/* 4) preço (segunda coluna) */
 #pedidos-container .produto-preco {
-  font-size: 0.95rem;
-  color: #555;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #333;
+  text-align: right;
 }
 
-/* Destaque ao preço */
-#pedidos-container .produto-preco {
-  font-weight: 700;
-  color: #000;
-}
-
-/* 5) Botões alinhados à direita */
+/* 5) botões (terceira coluna) */
 #pedidos-container .produto-botoes {
   display: flex;
   gap: 8px;
-  margin-left: 16px;
-  flex-shrink: 0;
+  justify-self: end;
 }
 
-/* Botões com ícone */
-#pedidos-container .btn-acao,
-#pedidos-container .btn-carrinho {
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+/* 6) escondemos imagem, caso esteja vindo */
+#pedidos-container .produto-imagem {
+  display: none;
 }
 
-/* Responsividade: empilha em telas muito estreitas */
+/* 7) responsivo: em mobile, empilha em duas linhas */
 @media (max-width: 480px) {
   #pedidos-container .produto-item {
-    flex-direction: column;
-    align-items: flex-start;
+    grid-template-columns: 1fr auto;
+    grid-row-gap: 8px;
   }
-  #pedidos-container .produto-imagem {
-    margin-bottom: 12px;
-    margin-right: 0;
+  #pedidos-container .produto-preco {
+    text-align: left;
   }
   #pedidos-container .produto-botoes {
-    margin-top: 12px;
-    margin-left: 0;
-    width: 100%;
-    justify-content: space-between;
+    justify-self: start;
   }
 }
+
 
 
 #pesquisa-produto, #categoria-filtro {
