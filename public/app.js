@@ -440,46 +440,100 @@ function filtrarProdutos() {
     renderizarProdutos(produtosFiltrados);
 }
 
+// Funções para carregar e renderizar pedidos (NOVAS FUNÇÕES)
+async function carregarPedidos() {
+    try {
+        const response = await fetch('/api/pedidos');
+        const data = await response.json();
+        console.log('Resposta recebida de /api/pedidos:', data);
+
+        if (!Array.isArray(data)) {
+            throw new Error('Resposta inválida da API de pedidos.');
+        }
+
+        renderizarPedidos(data);
+    } catch (error) {
+        console.error('Erro ao carregar pedidos:', error);
+        showCustomAlert('Erro ao carregar pedidos. Verifique o servidor.');
+    }
+}
+
 function renderizarPedidos(pedidos) {
   const container = document.getElementById('pedidos-container');
   if (!container) return;
 
   container.innerHTML = '';
 
-  // Filtra apenas os pedidos relevantes
-  const pedidosVisiveis = pedidos.filter(p =>
-    p.status !== 'Cancelado' && p.status !== 'Finalizado'
-  );
+  const pedidosVisiveis = pedidos.filter(p => p.status !== 'Cancelado' && p.status !== 'Finalizado');
 
   pedidosVisiveis.forEach(pedido => {
     const div = document.createElement('div');
-    div.className = 'pedido-item';
+    div.className = 'produto-item';
     div.innerHTML = `
-      <h3>Pedido #${pedido.id}</h3>
-      <p><strong>Cliente:</strong> ${pedido.clienteNome}</p>
-      <p><strong>Endereço:</strong> ${pedido.endereco}</p>
-      <p><strong>Valor Total:</strong> R$ ${pedido.valorTotal.toFixed(2)}</p>
-      <p>
-        <strong>Status:</strong>
+      <p><strong>Pedido #${pedido.id}</strong></p>
+      <p><strong>Cliente:</strong> ${pedido.cliente_nome || '---'}</p>
+      <p><strong>Endereço:</strong> ${pedido.endereco || '---'}</p>
+      <p><strong>Total:</strong> R$ ${Number(pedido.valor_total || 0).toFixed(2)}</p>
+      <p>Status: 
         <select onchange="atualizarStatus(${pedido.id}, this.value)">
-          <option ${pedido.status === 'Pendente'       ? 'selected' : ''}>Pendente</option>
-          <option ${pedido.status === 'Aceito'         ? 'selected' : ''}>Aceito</option>
-          <option ${pedido.status === 'Em separação'   ? 'selected' : ''}>Em separação</option>
-          <option ${pedido.status === 'Enviado'        ? 'selected' : ''}>Enviado</option>
-          <option ${pedido.status === 'Finalizado'    ? 'selected' : ''}>Finalizado</option>
-          <option ${pedido.status === 'Cancelado'     ? 'selected' : ''}>Cancelado</option>
+          <option ${pedido.status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+          <option ${pedido.status === 'Aceito' ? 'selected' : ''}>Aceito</option>
+          <option ${pedido.status === 'Em separação' ? 'selected' : ''}>Em separação</option>
+          <option ${pedido.status === 'Enviado' ? 'selected' : ''}>Enviado</option>
+          <option ${pedido.status === 'Finalizado' ? 'selected' : ''}>Finalizado</option>
+          <option ${pedido.status === 'Cancelado' ? 'selected' : ''}>Cancelado</option>
         </select>
       </p>
       <ul>
-        ${pedido.itens
-          .map(item => `<li>${item.quantidade}x ${item.nome}</li>`)
-          .join('')}
+        ${pedido.itens.map(item => `<li>${item.quantidade}x ${item.nome}</li>`).join('')}
       </ul>
     `;
     container.appendChild(div);
   });
 }
 
+
+async function atualizarStatus(id, status) {
+    try {
+        await fetch(`/api/pedidos/${id}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status })
+        });
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Status atualizado com sucesso!');
+    } catch (error) {
+        console.error('Erro ao atualizar status:', error);
+        // Usando um modal customizado em vez de alert()
+        showCustomAlert('Erro ao atualizar status.');
+    }
+}
+
+// Funções para modal customizado (substituindo alert/confirm)
+function showCustomAlert(message) {
+    const customAlert = document.createElement('div');
+    customAlert.className = 'custom-alert';
+    customAlert.innerHTML = `
+        <div class="custom-alert-content">
+            <p>${message}</p>
+            <button onclick="this.parentNode.parentNode.remove()">OK</button>
+        </div>
+    `;
+    document.body.appendChild(customAlert);
+}
+
+function showCustomConfirm(message, onConfirm) {
+    const customConfirm = document.createElement('div');
+    customConfirm.className = 'custom-confirm';
+    customConfirm.innerHTML = `
+        <div class="custom-confirm-content">
+            <p>${message}</p>
+            <button onclick="this.parentNode.parentNode.remove(); ${onConfirm.name}();">Sim</button>
+            <button onclick="this.parentNode.parentNode.remove()">Não</button>
+        </div>
+    `;
+    document.body.appendChild(customConfirm);
+}
 
 // Função para carregar o relatório de vendas (MODIFICADA)
 async function carregarRelatorio() {
