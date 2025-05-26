@@ -254,6 +254,9 @@ app.get('/api/pedidos', async (req, res) => {
         p.id as pedido_id,
         p.status,
         p.criado_em,
+        p.cliente_nome,
+        p.endereco,
+        p.valor_total,
         pi.produto_id,
         pr.nome as nome_produto,
         pi.quantidade
@@ -264,15 +267,20 @@ app.get('/api/pedidos', async (req, res) => {
     `);
 
     const pedidosMap = {};
+
     rows.forEach(row => {
       if (!pedidosMap[row.pedido_id]) {
         pedidosMap[row.pedido_id] = {
           id: row.pedido_id,
           status: row.status,
           criado_em: row.criado_em,
+          cliente_nome: row.cliente_nome,
+          endereco: row.endereco,
+          valor_total: row.valor_total,
           itens: []
         };
       }
+
       pedidosMap[row.pedido_id].itens.push({
         produto_id: row.produto_id,
         nome: row.nome_produto,
@@ -287,6 +295,7 @@ app.get('/api/pedidos', async (req, res) => {
     res.status(500).json({ error: 'Erro ao buscar pedidos.' });
   }
 });
+
 
 // Detalhar Pedido
 app.put('/api/pedidos/:id/status', async (req, res) => {

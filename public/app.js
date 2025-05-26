@@ -491,7 +491,7 @@ function renderizarPedidos(pedidos) {
     container.appendChild(div);
   });
 }
-
+    
 
 async function atualizarStatus(id, status) {
     try {
