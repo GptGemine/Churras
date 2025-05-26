@@ -8,7 +8,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #020202; /* Cor de fundo escura para contraste */
+background-image: url('/uploads/fundo.png');
 }
 
 .page {
