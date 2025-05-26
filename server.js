@@ -224,7 +224,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // Autenticar login
-app.post('${API_BASE}/api/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password, role } = req.body;
   try {
     const { rows } = await pool.query('SELECT * FROM usuarios WHERE username=$1 AND role=$2', [username, role]);
