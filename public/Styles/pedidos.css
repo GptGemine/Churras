@@ -176,69 +176,7 @@
     
 
 
-    /* Estilo do item do produto */
-    .produto-item {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Garante que o conteúdo seja distribuído verticalmente */
-        gap: 10px;
-        background: #f9f9f9;
-        border-radius: 10px;
-        padding: 20px;
-        box-shadow: 5px 0px 10px rgb(255, 0, 0);
-        transition: transform 0,9s ease, box-shadow 0,9s ease;
-        height: 100%; /* Para garantir o uso completo do espaço vertical */
-        position: relative; /* Para facilitar o posicionamento dos botões */
-    }
-    .produto-item {
-        flex-direction: column; /* Para telas menores, o conteúdo será empilhado verticalmente */
-        align-items: center; 
-        text-align: center;
-    }
     
-    .produto-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    }
-    
-    @media (min-width: 768px) {
-        .produto-item {
-            flex-direction: row; /* A partir de telas médias, os itens ficam lado a lado */
-            text-align: left;
-        }
-    }
-    .produto-item:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 16px rgb(211, 88, 17);
-    }
-
-    /* Imagem do produto */
-    .produto-imagem {
-        width: 150px; /* Ajuste de largura */
-        height: 150px;
-        border-radius: 8px;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    .produto-imagem {
-        width: 100%;
-        height: auto;
-        max-height: 150px;
-        border-radius: 8px;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-    
-    @media (min-width: 768px) {
-        .produto-imagem {
-            width: 150px; /* Retorna ao tamanho maior em telas médias */
-            height: 150px;
-        }
-    }
-    .produto-imagem:hover {
-        transform: scale(1.1) rotate(-2deg);
-    }
-
 
     /* Detalhes do produto */
     .produto-info {
@@ -306,70 +244,95 @@
 /* --- layout de lista minimalista --- */
 
 /* 1) container vira coluna */
-#pedidos-container {
+/* Container de pedidos — escopo */
+#pedidos-container .produto-item {
+  /* layout base (você pode sobrescrever depois) */
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 0 16px;
+  justify-content: space-between;
+  gap: 10px;
+
+  /* visual */
+  background: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 5px 0px 10px rgb(255, 0, 0);
+
+  /* transições */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* para posicionar botões absolutos */
+  position: relative;
+  height: 100%;
 }
 
-#pedidos-container .hover {
-  transform: translateY(-5px);
-    box-shadow: 0 8px 16px rgb(211, 88, 17);
-}
-
-/* 2) cada pedido = linha dividida em três áreas */
-#pedidos-container .produto-item {
-  display: grid;
-  grid-template-columns: 2fr 1fr auto;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid #ff0000;
-  background: none;        /* tira o background branco */
-  box-shadow: none;        /* remove sombra */
-}
-
-/* 3) nome do produto (primeira coluna) */
-#pedidos-container .produto-nome {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #222;
-}
-
-/* 4) preço (segunda coluna) */
-#pedidos-container .produto-preco {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #333;
-  text-align: right;
-}
-
-/* 5) botões (terceira coluna) */
-#pedidos-container .produto-botoes {
-  display: flex;
-  gap: 8px;
-  justify-self: end;
-}
-
-/* 6) escondemos imagem, caso esteja vindo */
-#pedidos-container .produto-imagem {
-  display: none;
-}
-
-/* 7) responsivo: em mobile, empilha em duas linhas */
-@media (max-width: 480px) {
+/* Reaplica o override de mobile → row em telas médias */
+@media (min-width: 768px) {
   #pedidos-container .produto-item {
-    grid-template-columns: 1fr auto;
-    grid-row-gap: 8px;
-  }
-  #pedidos-container .produto-preco {
+    flex-direction: row;
     text-align: left;
   }
-  #pedidos-container .produto-botoes {
-    justify-self: start;
+}
+
+/* Hover original (escuro) */
+#pedidos-container .produto-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Hover variante laranja (fica por cima, se preferir) */
+#pedidos-container .produto-item:hover {
+ box-shadow: 0s s s 8px 16px rgb(211, 88, 17);
+}
+
+/* Imagem do produto — transição e hover */
+#pedidos-container .produto-imagem {
+  width: 150px;
+  height: 150px;
+  border-radius: 8px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  #pedidos-container .produto-imagem {
+    width: 150px;
+    height: 150px;
   }
+}
+
+#pedidos-container .produto-imagem:hover {
+  transform: scale(1.1) rotate(-2deg);
+}
+
+/* Botões — transição de cor igual ao cliente */
+#pedidos-container .btn-carrinho,
+#pedidos-container .btn-acao {
+  background-color: #ff0a0a;
+  color: #fff;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+}
+
+#pedidos-container .btn-carrinho:hover,
+#pedidos-container .btn-acao:hover {
+  background-color: #ff7b00;
+}
+
+/* Produto-botoes — mantém posição absoluta igual ao cliente */
+#pedidos-container .produto-botoes {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
 }
 
 
