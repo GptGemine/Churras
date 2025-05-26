@@ -176,7 +176,69 @@
     
 
 
+    /* Estilo do item do produto */
+    .produto-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Garante que o conteúdo seja distribuído verticalmente */
+        gap: 10px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 5px 0px 10px rgb(255, 0, 0);
+        transition: transform 0,9s ease, box-shadow 0,9s ease;
+        height: 100%; /* Para garantir o uso completo do espaço vertical */
+        position: relative; /* Para facilitar o posicionamento dos botões */
+    }
+    .produto-item {
+        flex-direction: column; /* Para telas menores, o conteúdo será empilhado verticalmente */
+        align-items: center; 
+        text-align: center;
+    }
     
+    .produto-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+    
+    @media (min-width: 768px) {
+        .produto-item {
+            flex-direction: row; /* A partir de telas médias, os itens ficam lado a lado */
+            text-align: left;
+        }
+    }
+    .produto-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgb(211, 88, 17);
+    }
+
+    /* Imagem do produto */
+    .produto-imagem {
+        width: 150px; /* Ajuste de largura */
+        height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    .produto-imagem {
+        width: 100%;
+        height: auto;
+        max-height: 150px;
+        border-radius: 8px;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+    }
+    
+    @media (min-width: 768px) {
+        .produto-imagem {
+            width: 150px; /* Retorna ao tamanho maior em telas médias */
+            height: 150px;
+        }
+    }
+    .produto-imagem:hover {
+        transform: scale(1.1) rotate(-2deg);
+    }
+
 
     /* Detalhes do produto */
     .produto-info {
@@ -244,142 +306,44 @@
 /* --- layout de lista minimalista --- */
 
 /* 1) container vira coluna */
-/* Container de pedidos — escopo */
-/* pedidos.css */
-
-/* 1) Grid de cards igual ao cliente */
-#pedidos-container.produto-grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 60px;
-  max-width: 1600px;
-  margin: 80px auto;
-  padding: 20px;
-}
-
-@media (min-width: 768px) {
-  #pedidos-container.produto-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  #pedidos-container.produto-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* 2) Cards de pedido: animações, sombras e layout igual ao cliente */
-#pedidos-container .produto-item {
+#pedidos-container {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
-  background: #f9f9f9;
-  border-radius: 10px;
-  padding: 20px;
+  gap: 8px;
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 16px;
+}
+
+/* 2) cada pedido = linha dividida em três áreas */
+#pedidos-container .produto-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr auto;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #ff0000;
+  background: none;
+
+  /* --- sombras e transições reaplicadas --- */
   box-shadow: 5px 0px 10px rgb(255, 0, 0);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-  height: 100%;
-  text-align: center;
-  align-items: center;
 }
 
-@media (min-width: 768px) {
-  #pedidos-container .produto-item {
-    flex-direction: row;
-    text-align: left;
-    align-items: flex-start;
-  }
-}
-
-/* Hover: elevação com sombra */
+/* hover com sombra laranja adjacente */
 #pedidos-container .produto-item:hover {
   transform: translateY(-5px);
-  /* sombra original escura */
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-  /* se preferir laranja, descomente: */
-  /* box-shadow: 0 8px 16px rgb(211, 88, 17); */
+  box-shadow: 0 8px 16px rgb(211, 88, 17);
 }
 
-/* 3) Imagem com transição igual ao cliente */
-#pedidos-container .produto-imagem {
-  width: 100%;
-  max-width: 150px;
-  max-height: 150px;
-  border-radius: 8px;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-  margin-bottom: 10px;
-}
-
-@media (min-width: 768px) {
-  #pedidos-container .produto-imagem {
-    margin-bottom: 0;
-    margin-right: 16px;
-  }
-}
-
-#pedidos-container .produto-imagem:hover {
-  transform: scale(1.1) rotate(-2deg);
-}
-
-/* 4) Info e tipografia */
-#pedidos-container .produto-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
+/* 3) nome do produto (primeira coluna) */
 #pedidos-container .produto-nome {
-  font-weight: bold;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #222;
 }
 
-#pedidos-container .produto-preco {
-  font-weight: bold;
-  font-size: 1.1rem;
-  color: #000;
-}
+/* ... restante do seu CSS ... */
 
-#pedidos-container .produto-descricao,
-#pedidos-container .produto-categoria,
-#pedidos-container .produto-estoque {
-  font-size: 0.9rem;
-  color: #555;
-}
-
-/* 5) Botões com transição igual ao cliente */
-#pedidos-container .produto-botoes {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  position: absolute;
-  bottom: 5px;
-  left: 0;
-  right: 0;
-}
-
-#pedidos-container .btn-carrinho,
-#pedidos-container .btn-acao {
-  background-color: #ff0a0a;
-  color: #fff;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-}
-
-#pedidos-container .btn-carrinho:hover,
-#pedidos-container .btn-acao:hover {
-  background-color: #ff7b00;
-}
 
 
 
