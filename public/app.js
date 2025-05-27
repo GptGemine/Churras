@@ -442,21 +442,24 @@ function filtrarProdutos() {
 
 // Funções para carregar e renderizar pedidos (NOVAS FUNÇÕES)
 async function carregarPedidos(statusFiltro = '') {
-    try {
-        const response = await fetch('/api/pedidos');
-        const data = await response.json();
-        console.log('Resposta recebida de /api/pedidos:', data);
+  try {
+    const response = await fetch('/api/pedidos');
+    const data = await response.json();
 
-        if (!Array.isArray(data)) {
-            throw new Error('Resposta inválida da API de pedidos.');
-        }
+    if (!Array.isArray(data)) throw new Error('Resposta inválida da API de pedidos.');
 
-        renderizarPedidos(data);
-    } catch (error) {
-        console.error('Erro ao carregar pedidos:', error);
-        showCustomAlert('Erro ao carregar pedidos. Verifique o servidor.');
+    let pedidosFiltrados = data.filter(p => p.status !== 'Cancelado' && p.status !== 'Finalizado');
+    if (statusFiltro) {
+      pedidosFiltrados = data.filter(p => p.status === statusFiltro);
     }
+
+    renderizarPedidos(pedidosFiltrados);
+  } catch (error) {
+    console.error('Erro ao carregar pedidos:', error);
+    showCustomAlert('Erro ao carregar pedidos.');
+  }
 }
+
 
 function renderizarPedidos(pedidos) {
   const container = document.getElementById('pedidos-container');
