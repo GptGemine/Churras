@@ -441,7 +441,7 @@ function filtrarProdutos() {
 }
 
 // Funções para carregar e renderizar pedidos (NOVAS FUNÇÕES)
-async function carregarPedidos() {
+async function carregarPedidos(statusFiltro = '') {
     try {
         const response = await fetch('/api/pedidos');
         const data = await response.json();
@@ -491,6 +491,12 @@ function renderizarPedidos(pedidos) {
     container.appendChild(div);
   });
 }
+
+function filtrarPedidosPorStatus() {
+  const statusSelecionado = document.getElementById('filtro-status').value;
+  carregarPedidos(statusSelecionado);
+}
+
     
 
 async function atualizarStatus(id, status) {
