@@ -24,15 +24,18 @@
   <main class="container">
     <h2 class="titulo-produtos">Pedidos</h2>
   
+  <div class="filtro-container">
   <select id="filtro-status" onchange="filtrarPedidosPorStatus()">
-  <option value="">Todos os status</option>
-  <option value="Pendente">Pendente</option>
-  <option value="Aceito">Aceito</option>
-  <option value="Em separação">Em separação</option>
-  <option value="Enviado">Enviado</option>
-  <option value="Finalizado">Finalizado</option>
-  <option value="Cancelado">Cancelado</option>
-</select>
+    <option value="">Todos os status</option>
+    <option value="Pendente">Pendente</option>
+    <option value="Aceito">Aceito</option>
+    <option value="Em separação">Em separação</option>
+    <option value="Enviado">Enviado</option>
+    <option value="Finalizado">Finalizado</option>
+    <option value="Cancelado">Cancelado</option>
+  </select>
+</div>
+
 
     <div id="pedidos-container" class="produto-grid">
       <!-- Pedidos aparecerão aqui -->
