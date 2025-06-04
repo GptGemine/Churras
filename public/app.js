@@ -574,7 +574,7 @@ async function carregarRelatorio() {
       total += subtotal;
       container.innerHTML += `
         <div class="produto-item">
-        <p><strong>Cliente:</strong> ${r.cliente}</p>
+        <p><strong>Cliente:</strong> ${r.cliente_nome}</p>
           <p><strong>Produto:</strong> ${r.nome}</p>
           <p><strong>Categoria:</strong> ${r.categoria}</p>
           <p><strong>Quantidade:</strong> ${r.quantidade}</p>
