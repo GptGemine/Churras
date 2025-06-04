@@ -255,6 +255,60 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+app.get('/api/relatorio-vendas', async (req, res) => {
+  const { dataInicio, dataFim, horaInicio, horaFim, categoria, status } = req.query;
+
+  let query = `
+    SELECT p.id, pr.nome, pr.categoria, pi.quantidade, pr.preco, p.criado_em
+    FROM pedidos p
+    JOIN pedido_item pi ON p.id = pi.pedido_id
+    JOIN produtos pr ON pr.id = pi.produto_id
+    WHERE 1=1
+  `;
+
+  const params = [];
+  let index = 1;
+
+  if (dataInicio) {
+    query += ` AND DATE(p.criado_em) >= $${index++}`;
+    params.push(dataInicio);
+  }
+
+  if (dataFim) {
+    query += ` AND DATE(p.criado_em) <= $${index++}`;
+    params.push(dataFim);
+  }
+
+  if (horaInicio) {
+    query += ` AND TO_CHAR(p.criado_em, 'HH24:MI') >= $${index++}`;
+    params.push(horaInicio);
+  }
+
+  if (horaFim) {
+    query += ` AND TO_CHAR(p.criado_em, 'HH24:MI') <= $${index++}`;
+    params.push(horaFim);
+  }
+
+  if (categoria) {
+    query += ` AND pr.categoria = $${index++}`;
+    params.push(categoria);
+  }
+
+  if (status) {
+    query += ` AND p.status = $${index++}`;
+    params.push(status);
+  }
+
+  try {
+    const { rows } = await pool.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error('Erro ao gerar relatório:', err);
+    res.status(500).json({ error: 'Erro ao gerar relatório.' });
+  }
+});
+
+
 // Listar pedidos
 app.get('/api/pedidos', async (req, res) => {
   try {
