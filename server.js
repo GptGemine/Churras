@@ -415,7 +415,7 @@ app.get('/api/relatorio-vendas', async (req, res) => {
   SELECT 
     p.id, 
     pr.nome, 
-    p.cliente_nome AS cliente, 
+    p.cliente_nome, 
     pr.categoria, 
     pi.quantidade, 
     pr.preco, 
