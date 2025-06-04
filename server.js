@@ -259,7 +259,7 @@ app.get('/api/relatorio-vendas', async (req, res) => {
   const { dataInicio, dataFim, horaInicio, horaFim, categoria, status } = req.query;
 
   let query = `
-    SELECT p.id, pr.nome, pr.categoria, pi.quantidade, pr.preco, p.criado_em
+    SELECT p.id, pr.nome, p.nome pr.categoria, pi.quantidade, pr.preco, p.criado_em
     FROM pedidos p
     JOIN pedido_item pi ON p.id = pi.pedido_id
     JOIN produtos pr ON pr.id = pi.produto_id
