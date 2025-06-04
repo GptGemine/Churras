@@ -546,6 +546,8 @@ function showCustomConfirm(message, onConfirm) {
 
 // Função para carregar o relatório de vendas (MODIFICADA)
 async function carregarRelatorio() {
+  const baseURL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
   const inicio = document.getElementById('data-inicio').value;
   const fim = document.getElementById('data-fim').value;
   const hIni = document.getElementById('hora-inicio').value;
@@ -565,13 +567,11 @@ async function carregarRelatorio() {
 
     const container = document.getElementById('relatorio-container');
     container.innerHTML = '';
-
     let total = 0;
 
     relatorio.forEach(r => {
       const subtotal = r.preco * r.quantidade;
       total += subtotal;
-
       container.innerHTML += `
         <div class="produto-item">
           <p><strong>Produto:</strong> ${r.nome}</p>
@@ -587,9 +587,10 @@ async function carregarRelatorio() {
     document.getElementById('total-vendas').innerText = `Total: R$ ${total.toFixed(2)}`;
   } catch (err) {
     console.error('Erro ao carregar relatório:', err);
-    showCustomAlert('Erro ao carregar relatório de vendas.');
+    alert('Erro ao carregar relatório de vendas.');
   }
 }
+
 
 // Carrega os produtos na inicialização da página (MODIFICADA)
 window.onload = () => {
