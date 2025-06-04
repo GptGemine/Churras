@@ -19,23 +19,29 @@
       <li><a href="relatorios.html">Relatorios</a></li>
     </ul>
   </nav>
-  <section class="filtro-container">
-    <label>Data início: <input type="date" id="data-inicio" /></label>
-    <label>Data fim: <input type="date" id="data-fim" /></label>
-    <label>Hora início: <input type="time" id="hora-inicio" /></label>
-    <label>Hora fim: <input type="time" id="hora-fim" /></label>
-    <label>Categoria:
-      <select id="categoria">
-        <option value="">Todas</option>
-        <option value="Bovina">Bovina</option>
-        <option value="Aves">Aves</option>
-        <option value="Suínos">Suínos</option>
-        <option value="Peixes">Peixes</option>
-        <option value="Promoção do dia">Promoção do dia</option>
-      </select>
-    </label>
-    <button onclick="carregarRelatorio()">Filtrar</button>
-  </section>
+  <div class="filtro-relatorio">
+  <input type="date" id="data-inicio" placeholder="Data início">
+  <input type="date" id="data-fim" placeholder="Data fim">
+  <input type="time" id="hora-inicio" placeholder="Hora início">
+  <input type="time" id="hora-fim" placeholder="Hora fim">
+  <select id="categoria">
+    <option value="">Todas as categorias</option>
+    <option value="Bovina">Bovina</option>
+    <option value="Suína">Suína</option>
+    <option value="Frango">Frango</option>
+  </select>
+  <select id="status">
+    <option value="">Todos os status</option>
+    <option value="Pendente">Pendente</option>
+    <option value="Finalizado">Finalizado</option>
+    <option value="Cancelado">Cancelado</option>
+  </select>
+  <button onclick="carregarRelatorio()">Filtrar</button>
+</div>
+
+<div id="relatorio-container"></div>
+<p id="total-vendas"></p>
+
 
   <main class="container">
     <h2 class="titulo-produtos">Vendas</h2>

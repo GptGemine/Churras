@@ -465,3 +465,78 @@
 .menu-navegacao a:hover {
   background-color: #ee7d3c;
 }
+
+/* Container geral dos filtros */
+.filtro-relatorio {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px auto;
+  padding: 15px;
+  max-width: 1200px;
+  border-radius: 10px;
+  background-color: #fff5f5;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.1);
+}
+
+/* Campos de entrada */
+.filtro-relatorio input,
+.filtro-relatorio select {
+  padding: 12px;
+  font-size: 1rem;
+  border: 3px solid #ff2e2e;
+  border-radius: 12px;
+  max-width: 200px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Botão de filtrar */
+.filtro-relatorio button {
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-color: #ff2e2e;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filtro-relatorio button:hover {
+  background-color: #cc2525;
+}
+
+/* Container dos resultados */
+#relatorio-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Estilo de cada item do relatório */
+.produto-item {
+  background: #fff;
+  border: 2px solid #ff2e2e;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0px 2px 10px rgba(255, 0, 0, 0.05);
+}
+
+.produto-item p {
+  margin: 5px 0;
+  font-size: 0.95rem;
+}
+
+/* Total de vendas */
+#total-vendas {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #ff2e2e;
+  margin-top: 10px;
+}
