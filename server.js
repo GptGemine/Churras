@@ -412,13 +412,19 @@ app.get('/api/relatorio-vendas', async (req, res) => {
   try {
     const params = [];
     let query = `
-      SELECT p.id, pr.nome, p.cliente_nome, pr.categoria, pi.quantidade, pr.preco, p.criado_em
-      FROM pedidos p
-      JOIN pedido_item pi ON pi.pedido_id = p.id
-      JOIN produtos pr ON pr.id = pi.produto_id
-      WHERE p.status != 'Cancelado'
-    `;
-
+  SELECT 
+    p.id, 
+    pr.nome, 
+    p.cliente_nome AS cliente, 
+    pr.categoria, 
+    pi.quantidade, 
+    pr.preco, 
+    p.criado_em,
+    p.status
+  FROM pedidos p
+  JOIN pedido_item pi ON pi.pedido_id = p.id
+  JOIN produtos pr ON pr.id = pi.produto_id
+`;
     if (dataInicio) {
       params.push(dataInicio);
       query += ` AND p.criado_em::date >= $${params.length}`;
